@@ -1,8 +1,9 @@
+package Utils;
 
-public class OBDError {
+public class Error {
     private String errorMsg;
 
-    public OBDError(String errorMsg) {
+    public Error(String errorMsg) {
         this.errorMsg = errorMsg;
     }
     public void setErrorMsg(String errorMsg) {
@@ -10,6 +11,9 @@ public class OBDError {
     }
 
     public String getErrorMsg() {
+        return errorMsg;
+    }
+    public String toString() {
         return errorMsg;
     }
 

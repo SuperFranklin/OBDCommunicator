@@ -1,3 +1,4 @@
+package Gui;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +11,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import Core.Service;
+
+import Commands.Engine.RPMCommand;
 
 public class TerminalDialog extends JDialog {
 
@@ -52,7 +56,7 @@ public class TerminalDialog extends JDialog {
 
             public void actionPerformed(ActionEvent e) {
                 //service.sendBytes(fldMessage.getText());
-                service.sendAndGetResponse( new RPMCommand("0100") );
+                service.sendAndGetResponse( new RPMCommand("010C") );
             }
         });
 

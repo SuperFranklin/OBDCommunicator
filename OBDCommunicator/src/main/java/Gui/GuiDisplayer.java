@@ -1,4 +1,8 @@
+package Gui;
 import javax.swing.*;
+
+import Core.Service;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

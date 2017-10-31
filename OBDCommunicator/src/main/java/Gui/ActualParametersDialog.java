@@ -1,3 +1,4 @@
+package Gui;
 import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,9 +44,7 @@ public class ActualParametersDialog extends JDialog {
         
         setVisible(true);
     }
-    private void testWithMap() {
-        Map map = new HashMap<String, String>();
-    }
+    
 
     
 

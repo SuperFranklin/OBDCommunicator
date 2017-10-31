@@ -1,4 +1,11 @@
+package Commands;
 import java.math.BigDecimal;
+import java.util.List;
+
+import Core.Service;
+import Utils.FactoryService;
+import Utils.OBDUnit;
+import Utils.Response;
 
 public abstract class Command {
 
@@ -13,6 +20,8 @@ public abstract class Command {
         this.communicate = communicate;
         
     }
+    public abstract BigDecimal getDecimalValue( List< Byte > bytes);
+    
 
     public int getResponseTimeLimit() {
         return responseTimeLimit;
@@ -23,7 +32,7 @@ public abstract class Command {
     }
 
     public String getCommunicate() {
-        return communicate;
+        return communicate +"\r";
     }
 
     public void setCommunicate(String communicate) {

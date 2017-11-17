@@ -36,119 +36,119 @@ public class SerialPortComunicator{
     private SerialPort serialPort;
     private SerialWriter serialWriter;
     private SerialReader serialReader;
-    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    ScheduledExecutorService scheduler= Executors.newScheduledThreadPool( 1 );
 
-    public SerialPortComunicator(Service service) {
-        this.service = service;
-    }
+    public SerialPortComunicator(){}
 
     @SuppressWarnings("restriction")
     Response conncet( String portName )
-            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException{
 
-        Response result = new Response();
+        Response result= new Response();
 
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+        CommPortIdentifier portIdentifier= CommPortIdentifier.getPortIdentifier( portName );
 
-        if (portIdentifier.isCurrentlyOwned()) {
-            result.addError(new Error("Error: Port is currently in use"));
-        } else {
-            CommPort commPort = portIdentifier.open(this.getClass().getName(), 1000);
+        if(portIdentifier.isCurrentlyOwned()){
+            result.addError( new Error( "Error: Port is currently in use" ) );
+        }else{
+            CommPort commPort= portIdentifier.open( this.getClass().getName(), 1000 );
 
-            if (commPort instanceof SerialPort) {
+            if(commPort instanceof SerialPort){
 
-                serialPort = (SerialPort) commPort;
-                serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-                        SerialPort.PARITY_NONE);
+                serialPort= ( SerialPort ) commPort;
+                serialPort.setSerialPortParams( 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+                        SerialPort.PARITY_NONE );
 
-                inStream = serialPort.getInputStream();
-                outStream = serialPort.getOutputStream();
-                serialWriter = new SerialWriter(outStream);
-                serialReader = new SerialReader(inStream);
+                inStream= serialPort.getInputStream();
+                outStream= serialPort.getOutputStream();
+                serialWriter= new SerialWriter( outStream );
+                serialReader= new SerialReader( inStream );
 
-                try {
-                    serialPort.notifyOnDataAvailable(true);
-                    serialPort.addEventListener(serialReader);
-                } catch (TooManyListenersException e) {
+                try{
+                    serialPort.notifyOnDataAvailable( true );
+                    serialPort.addEventListener( serialReader );
+                }catch (TooManyListenersException e){
                     e.printStackTrace();
                 }
-                System.out.println("connected");
+                System.out.println( "connected" );
 
-            } else {
-                result.addError(new Error(" Port nie jest portem szeregowym"));
+            }else{
+                result.addError( new Error( " Port nie jest portem szeregowym" ) );
             }
         }
         return result;
     }
 
-    public void send( String data ) {
-        try {
-            outStream.write(data.getBytes());
+    public void send( String data ){
+        try{
+            outStream.write( data.getBytes() );
             outStream.flush();
 
-        } catch (IOException e) {
+        }catch (IOException e){
             e.printStackTrace();
         }
 
     }
 
     @SuppressWarnings("restriction")
-    public void close() {
-        try {
+    public void close(){
+        try{
             serialPort.getOutputStream().flush();
-        } catch (IOException e) {
+        }catch (IOException e){
             e.printStackTrace();
         }
 
-        if (serialPort != null) {
+        if(serialPort != null){
             serialPort.close();
-            inStream = null;
-            outStream = null;
+            inStream= null;
+            outStream= null;
         }
     }
 
-    public Response sendAndGetResponse( Command command ) {
-        Response result = new Response();
-        send(command.getCommunicate());
-        ScheduledFuture < Response > future =
-                scheduler.schedule(new CommandScheduler(command), 20, TimeUnit.MILLISECONDS);
-        try {
-            result = future.get();
-        } catch (InterruptedException e) {
-            result.addError(new Error(e.toString()));
-        } catch (ExecutionException e) {
-            result.addError(new Error(e.toString()));
-        }
-        return result;
-    }
-
-    public List < Byte > getBufferAsList( byte [ ] buffer ) {
-        List < Byte > result = new ArrayList < Byte >();
-        int realLength = Utils.getRealBufferLength(buffer);
-        for (int i = 0; i < realLength; i++) {
-            result.add(new Byte(buffer[i]));
+    public Response sendAndGetResponse( Command command ){
+        Response result= new Response();
+        send( command.getCommunicate() );
+        ScheduledFuture<Response> future=
+                scheduler.schedule( new CommandScheduler( command ), 5, TimeUnit.MILLISECONDS );
+        try{
+            result= future.get();
+        }catch (InterruptedException e){
+            result.addError( new Error( e.toString() ) );
+        }catch (ExecutionException e){
+            result.addError( new Error( e.toString() ) );
         }
         return result;
     }
 
-    class CommandScheduler implements Callable < Response >{
-        Response response = new Response();
+    public List<Byte> getBufferAsList( byte[] buffer ){
+        List<Byte> result= new ArrayList<Byte>();
+        int realLength= Utils.getRealBufferLength( buffer );
+        for(int i= 0; i < realLength; i++){
+            result.add( new Byte( buffer[ i ] ) );
+        }
+        return result;
+    }
+
+    class CommandScheduler implements Callable<Response>{
+        Response response= new Response();
         Command command;
 
-        public CommandScheduler(Command command) {
-            this.command = command;
+        public CommandScheduler( Command command ){
+            this.command= command;
         }
 
-        public Response call() throws Exception {
-            List<byte [ ]> buffers = serialReader.getBuffers();
-            byte[] buffer = Utils.getBufferWithRequestData(  buffers );
-            List < Byte > data = getBufferAsList(buffer);
-            int length = buffer.length;
-            if (data.size() != 0) {
-                response.setDecimalValue(command.getDecimalValue(data));
-            } else {
-                response.addError(new Error("no data"));
+        public Response call() throws Exception{
+            List<byte[]> buffers= serialReader.getBuffers();
+            byte[] buffer= Utils.getBufferWithRequestData( buffers );
+            serialReader.clearBuffers();
+            List<Byte> data= getBufferAsList( buffer );
+            BigDecimal decimalValue = command.getDecimalValue( data );
+            if(data.size() != 0 && decimalValue != null){
+                response.setDecimalValue( decimalValue );
+            }else{
+                response.addError( new Error( "no data" ) );
             }
+
             return response;
         }
     }

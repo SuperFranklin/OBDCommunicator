@@ -31,7 +31,7 @@ public class SerialReader implements SerialPortEventListener{
     @SuppressWarnings("restriction")
     public void serialEvent( SerialPortEvent event ){
         int data;
-        buffer= new byte[ 24 ];
+        buffer= new byte[ 20 ];
         if(event.getEventType() == 1){
 
             try{
@@ -40,15 +40,24 @@ public class SerialReader implements SerialPortEventListener{
                     if(data == '\n'){
                         break;
                     }
+                    
                     buffer[ len++ ]= ( byte ) data;
                 }
-                buffers.add( buffer );
-                service.setResponseToTerminal( new String( buffer, 0, len ));
+                
+                buffers.add( buffer );          
                 
             }catch (IOException e){
                 System.out.println( " System reader error : " + e );
             }
         }
+    }
+    
+    private String bufferToString( byte[] buffer) {
+        StringBuilder builder = new StringBuilder();
+        for( byte b : buffer) {
+            builder.append( b );
+        }
+        return builder.toString();
     }
 
     public List<byte[]> getBuffers(){

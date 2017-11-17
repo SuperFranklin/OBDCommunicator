@@ -1,4 +1,5 @@
 
+import Gui.GuiDisplayer;
 import Utils.FactoryService;
 
 /**
@@ -7,7 +8,7 @@ import Utils.FactoryService;
 public class OBDCommunicator {
 
     public static void main(String ...args){
-        FactoryService.getDisplayer();
-        
+        //FactoryService.getDisplayer();
+        new GuiDisplayer();
     }
 }

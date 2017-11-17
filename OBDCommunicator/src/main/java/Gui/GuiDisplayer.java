@@ -2,6 +2,7 @@ package Gui;
 import javax.swing.*;
 
 import Core.Service;
+import Utils.FactoryService;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,7 +10,7 @@ import java.awt.event.ActionListener;
 
 public class GuiDisplayer extends JFrame {
     JFrame frame;
-    private Service service = new Service(this);
+    private Service service = FactoryService.getService();
     private TerminalDialog terminalDialog;
     private ActualParametersDialog actualParametersDialog;
 

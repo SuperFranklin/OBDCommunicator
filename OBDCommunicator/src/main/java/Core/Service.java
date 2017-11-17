@@ -2,27 +2,20 @@
 package Core;
 
 
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.UnsupportedCommOperationException;
-
-import java.io.IOException;
-
 import Commands.Command;
 import Gui.GuiDisplayer;
 import Gui.TerminalDialog;
 import Utils.Error;
+import Utils.FactoryService;
 import Utils.Response;
 
 public class Service {
 
-    SerialPortComunicator serialPortComunicator = new SerialPortComunicator(this);
-    GuiDisplayer displayer;
+    SerialPortComunicator serialPortComunicator = FactoryService.getSerialPortComunicator();
+    GuiDisplayer displayer ;
     TerminalDialog terminalDialog;
 
-    public Service(GuiDisplayer displayer) {
-        this.displayer = displayer;
-
+    public Service() {
     }
 
     public void sendBytes(String message) {
@@ -43,9 +36,9 @@ public class Service {
         serialPortComunicator.close();
     }
 
-    public void setResponseToTerminal(String txt) {
+    /*public void setResponseToTerminal(String txt) {
         displayer.getTerminalDialog().setText(txt);
-    }
+    }*/
 
     public Response sendAndGetResponse(Command command) {
         return serialPortComunicator.sendAndGetResponse(command);

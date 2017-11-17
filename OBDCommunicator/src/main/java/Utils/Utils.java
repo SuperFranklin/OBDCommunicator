@@ -34,16 +34,9 @@ public class Utils{
 
         while (it.hasNext()){
             Byte b= it.next();
-            if(b.equals( new Byte( ( byte ) 32 ) )){
+            if (!( b > 48 && b<57 || b>64 && b< 71)) {
                 it.remove();
             }
-            if(b.equals( new Byte( ( byte ) 62 ) )){
-                it.remove();
-            }
-            if(b.equals( new Byte( ( byte ) 13 ) )){
-                it.remove();
-            }
-
         }
 
         return bytes;
@@ -52,7 +45,9 @@ public class Utils{
     public static byte[] getBufferWithRequestData( List<byte[]> buffers ){
 
         for(byte[] buffer : buffers){
-            if(getRealBufferLength( buffer ) >= 8){
+            //TODO tutaj tez œrednie rozwi¹zanie, powinno to byæ jakos skuteczniej rozwi¹zane, bo czasami
+            //przechodzi pusty bufor
+            if(getRealBufferLength( buffer ) > 7 && bufferIsNoData( buffer ) && !Utils.bufferContainNegativByte( buffer ) ){
                 return buffer;
             }
 
@@ -60,14 +55,55 @@ public class Utils{
         // TODO œrednie rozwi¹zanie
         return new byte[ 1 ];
     }
+    public static boolean bufferIsNoData( byte[] buffer) {
+        if (buffer[0] == 78 && buffer[1] ==79) {
+            return false;
+        }
+            return true;
+        
+    }
+    public static boolean bufferContainNegativByte( byte[] buffer) {
+        for ( byte b : buffer) {
+            if( b < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     
     public static List< Integer > getIntArray( List<Byte> list ) {
         List< Integer > result = new ArrayList<Integer>();
         for( Byte b : list) {
-            char c = (char) b.byteValue();
-            int i = Character.getNumericValue(  c );
+            int i = byteToInt( b );
             result.add(  new Integer(  i ) );
+
         }
         return result;
+    }
+   
+    public static int byteToInt(byte b) {
+        int result = 0;
+        
+        if(b>47 && b < 58) {
+            result = b - 48;
+        }
+        if( b>64 && b<71) {
+            result = b - 55;
+        }
+        
+        return result;
+    }
+
+    public static void removeSpaces( List<Byte> bytes ){
+
+        Iterator<Byte> it= bytes.iterator();
+        while (it.hasNext()){
+            Byte b= it.next();
+            if ( b == 32 ) {
+                it.remove();
+            }
+        }
+        
     }
 }

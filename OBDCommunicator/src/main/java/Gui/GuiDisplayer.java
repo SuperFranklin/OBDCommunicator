@@ -36,6 +36,7 @@ public class GuiDisplayer extends JFrame {
 
         serviceMenu.add(createTerminalMenuItem());
         serviceMenu.add(createActualParametersMenuItem());
+        serviceMenu.add(  createGraphsMenuItem() );
         menuBar.add(connectionMenu);
         menuBar.add(serviceMenu);
 
@@ -64,6 +65,23 @@ public class GuiDisplayer extends JFrame {
         });
 
         return menuItem;
+    }
+    
+    private JMenuItem createGraphsMenuItem() {
+        JMenuItem menuItem = new JMenuItem("Wykresy");
+        menuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    new GraphDialog( frame );
+                }catch (InterruptedException e1){
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        return menuItem;
+        
     }
 
     private JMenuItem createTerminalMenuItem() {

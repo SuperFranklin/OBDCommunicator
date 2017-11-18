@@ -109,7 +109,7 @@ public class SerialPortComunicator{
         Response result= new Response();
         send( command.getCommunicate() );
         ScheduledFuture<Response> future=
-                scheduler.schedule( new CommandScheduler( command ), 5, TimeUnit.MILLISECONDS );
+                scheduler.schedule( new CommandScheduler( command ), 10, TimeUnit.MILLISECONDS );
         try{
             result= future.get();
         }catch (InterruptedException e){

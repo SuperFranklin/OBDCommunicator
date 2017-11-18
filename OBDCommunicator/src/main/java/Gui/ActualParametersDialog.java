@@ -26,8 +26,8 @@ import Commands.IntakeManifoldPressureCommand;
 import Commands.RPMCommand;
 import Commands.ThrottlePositionCommand;
 import Core.Service;
+import Enums.OBDUnit;
 import Utils.FactoryService;
-import Utils.OBDUnit;
 import Utils.Response;
 
 public class ActualParametersDialog extends JDialog{

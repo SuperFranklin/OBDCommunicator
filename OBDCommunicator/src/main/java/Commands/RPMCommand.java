@@ -2,11 +2,14 @@
 package Commands;
 
 
+import java.awt.BorderLayout;
 import java.math.BigDecimal;
 import java.nio.Buffer;
 import java.util.List;
 
-import Utils.OBDUnit;
+import javax.swing.JPanel;
+
+import Enums.OBDUnit;
 import Utils.Response;
 import Utils.Utils;
 
@@ -14,7 +17,7 @@ public class RPMCommand extends Command{
 
     public RPMCommand(){
         super( "01", "0C" );
-        parameterName= " Prêdkoœæ obrotowa";
+        parameterName= "Prêdkoœæ obrotowa";
         unit= OBDUnit.rmp;
     }
 
@@ -34,5 +37,9 @@ public class RPMCommand extends Command{
         }
 
     }
+    
+    
 
 }
+
+

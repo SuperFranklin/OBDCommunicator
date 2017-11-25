@@ -34,7 +34,7 @@ public class Utils{
 
         while (it.hasNext()){
             Byte b= it.next();
-            if (!( b > 48 && b<57 || b>64 && b< 71)) {
+            if (!( b > 47 && b<58 || b>64 && b< 71)) {
                 it.remove();
             }
         }

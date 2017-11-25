@@ -119,6 +119,8 @@ public class ActualParametersDialog extends JDialog{
                     Response response= service.sendAndGetResponse( c );
                     if(!response.hasErrors()){
                         map.put( c, response.getDecimalValue() );
+                    }else {
+                        System.out.println( response.getErrorAsString() );
                     }
 
                     int actualRow= rowsMap.get( c );

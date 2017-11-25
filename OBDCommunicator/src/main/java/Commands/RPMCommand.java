@@ -23,18 +23,28 @@ public class RPMCommand extends Command{
 
     public BigDecimal getDecimalValue( List<Byte> bytes ){
         float value;
+        
         Utils.removeSpaces( bytes );
-        if(checkPIDs( bytes )){
+        if(bytes.size()>5 && checkPIDs( bytes )){ 
             Utils.removeRequestBytes( bytes );
 
             Utils.removeRedundantCharacters( bytes );
 
             List<Integer> ints= Utils.getIntArray( bytes );
-            value= (ints.get( 0 ) * 4096 + ints.get( 1 ) * 256 + ints.get( 2 ) * 16 + ints.get( 3 )) / 4;
-            return new BigDecimal( value );
-        }else {
-            return null;
+            if(ints.size() >3 ) {
+                value= (ints.get( 0 ) * 4096 + ints.get( 1 ) * 256 + ints.get( 2 ) * 16 + ints.get( 3 )) / 4;
+                return new BigDecimal( value );
+            }
+            else {
+                System.out.println( "ints : byte = "+bytes );
+                for( Integer xz : ints) {
+                    System.out.print( xz +", " );
+                }
+                
+            }
         }
+        
+        return null;
 
     }
     

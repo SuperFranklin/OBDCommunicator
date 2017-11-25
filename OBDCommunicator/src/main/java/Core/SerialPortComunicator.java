@@ -108,15 +108,23 @@ public class SerialPortComunicator{
     public Response sendAndGetResponse( Command command ){
         Response result= new Response();
         send( command.getCommunicate() );
-        ScheduledFuture<Response> future=
-                scheduler.schedule( new CommandScheduler( command ), 10, TimeUnit.MILLISECONDS );
-        try{
-            result= future.get();
-        }catch (InterruptedException e){
-            result.addError( new Error( e.toString() ) );
-        }catch (ExecutionException e){
-            result.addError( new Error( e.toString() ) );
+        try {
+        Thread.sleep( 15 );
+        List<byte[]> buffers= serialReader.getBuffers();
+        byte[] buffer= Utils.getBufferWithRequestData( buffers );
+        serialReader.clearBuffers();
+        List<Byte> data= getBufferAsList( buffer );
+        BigDecimal decimalValue = command.getDecimalValue( data );
+        if(data.size() != 0 && decimalValue != null){
+            result.setDecimalValue( decimalValue );
+        }else{
+            result.addError( new Error( "no data" ) );
         }
+        }catch(Exception e) {
+            result.addError( new Error( e.toString() ));
+        }
+        
+
         return result;
     }
 
@@ -128,29 +136,9 @@ public class SerialPortComunicator{
         }
         return result;
     }
+    
+    
+    
 
-    class CommandScheduler implements Callable<Response>{
-        Response response= new Response();
-        Command command;
-
-        public CommandScheduler( Command command ){
-            this.command= command;
-        }
-
-        public Response call() throws Exception{
-            List<byte[]> buffers= serialReader.getBuffers();
-            byte[] buffer= Utils.getBufferWithRequestData( buffers );
-            serialReader.clearBuffers();
-            List<Byte> data= getBufferAsList( buffer );
-            BigDecimal decimalValue = command.getDecimalValue( data );
-            if(data.size() != 0 && decimalValue != null){
-                response.setDecimalValue( decimalValue );
-            }else{
-                response.addError( new Error( "no data" ) );
-            }
-
-            return response;
-        }
-    }
 
 }

@@ -124,7 +124,6 @@ public class SerialPortComunicator{
             result.addError( new Error( e.toString() ));
         }
         
-
         return result;
     }
 

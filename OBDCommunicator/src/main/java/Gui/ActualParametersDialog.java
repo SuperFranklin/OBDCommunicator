@@ -32,7 +32,7 @@ import Utils.Response;
 
 public class ActualParametersDialog extends JDialog{
 
-    GuiDisplayer displayer;
+    MainScreen displayer;
     private JTable table;
     private JScrollPane scrollPane;
     private Service service= FactoryService.getService();
@@ -41,7 +41,7 @@ public class ActualParametersDialog extends JDialog{
 
     public ActualParametersDialog( JFrame frame ){
         super( frame );
-        displayer= ( GuiDisplayer ) frame;
+        displayer= ( MainScreen ) frame;
         try{
             initParameters();
             initMap();

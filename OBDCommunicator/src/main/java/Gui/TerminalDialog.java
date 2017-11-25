@@ -17,7 +17,7 @@ import Core.Service;
 
 public class TerminalDialog extends JDialog {
 
-    public GuiDisplayer parent;
+    public MainScreen parent;
     private Service service;
     private JTextField fldMessage = new JTextField(10);
     private JLabel lblResponse = new JLabel("Odpowiedzi");
@@ -30,7 +30,7 @@ public class TerminalDialog extends JDialog {
 
     public TerminalDialog(JFrame frame) {
         super(frame);
-        parent = (GuiDisplayer) frame;
+        parent = (MainScreen) frame;
         service = parent.getService();
         setLocation(100, 200);
         setSize(260, 310);

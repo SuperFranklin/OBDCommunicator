@@ -24,7 +24,7 @@ import org.w3c.dom.css.Counter;
 import Utils.Response;
 
 public class ConnectDialog extends JDialog{
-    private GuiDisplayer parent;
+    private MainScreen parent;
     //private JTextField fldPortName= new JTextField( 10 );
     private JComboBox<String> portsComboBox = initComboBoxParameters();
     private JLabel lblPornName= new JLabel( "Nazwa portu" );
@@ -36,7 +36,7 @@ public class ConnectDialog extends JDialog{
 
     public ConnectDialog( JFrame frame ){
         super( frame );
-        parent= ( GuiDisplayer ) frame;
+        parent= ( MainScreen ) frame;
         setLocationRelativeTo( null );
         setLocation( 100, 100 );
         setSize( 250, 250 );

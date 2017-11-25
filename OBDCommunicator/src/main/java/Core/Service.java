@@ -3,7 +3,7 @@ package Core;
 
 
 import Commands.Command;
-import Gui.GuiDisplayer;
+import Gui.MainScreen;
 import Gui.TerminalDialog;
 import Utils.Error;
 import Utils.FactoryService;
@@ -12,7 +12,7 @@ import Utils.Response;
 public class Service {
 
     SerialPortComunicator serialPortComunicator = FactoryService.getSerialPortComunicator();
-    GuiDisplayer displayer ;
+    MainScreen displayer ;
     TerminalDialog terminalDialog;
 
     public Service() {

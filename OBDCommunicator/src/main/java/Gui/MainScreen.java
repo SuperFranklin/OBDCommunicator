@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-public class GuiDisplayer extends JFrame{
+public class MainScreen extends JFrame{
     JFrame frame;
     private Service service= FactoryService.getService();
     private TerminalDialog terminalDialog;
@@ -24,7 +24,7 @@ public class GuiDisplayer extends JFrame{
     
     private JButton troubleCodesBtn;
     
-    public GuiDisplayer(){
+    public MainScreen(){
 
         super( "OBD Explorer" );
         setLayout( new BorderLayout() );

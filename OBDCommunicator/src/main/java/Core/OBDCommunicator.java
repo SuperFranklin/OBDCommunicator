@@ -2,6 +2,9 @@ package Core;
 
 import java.sql.SQLException;
 
+import javax.sql.rowset.CachedRowSet;
+
+import DAO.DTCUtils;
 import DataBase.DBProvider;
 import Gui.MainScreen;
 import Utils.FactoryService;
@@ -13,10 +16,6 @@ public class OBDCommunicator {
 
     public static void main(String ...args){
         new MainScreen();
-        try{
-            System.out.println( DBProvider.getFromTableFromWhere( "DTC", "CODE", "P0104" ).getString( 1 ) );
-        }catch (SQLException e){
-            System.out.println( e );
-        }
+        
     }
 }

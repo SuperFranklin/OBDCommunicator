@@ -21,78 +21,92 @@ public class MainScreen extends JFrame{
     private ActualParametersDialog actualParametersDialog;
     private Container container;
     private JPanel centralPanel;
-    
+
     private JButton troubleCodesBtn;
-    
+
     public MainScreen(){
 
         super( "OBD Explorer" );
         setLayout( new BorderLayout() );
         setUIManagerParameters();
-        container = getContentPane();
+        container= getContentPane();
         container.setLayout( new BorderLayout() );
         frame= this;
-        
+
         setSize( Toolkit.getDefaultToolkit().getScreenSize() );
-        
+
         setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
         add( createMenuBar(), BorderLayout.NORTH );
-        
+
         add( createNavigationPanel(), BorderLayout.WEST );
         setVisible( true );
-        
-        
+
+    }
+
+    private JPanel createNorthPanel(){
+        JPanel panel= new JPanel();
+
+        return panel;
+    }
+
+    private JPanel createConnectionPanel(){
+        JPanel panel= new JPanel( new BoxLayout( this , BoxLayout.LINE_AXIS ));
+
+        return panel;
     }
 
     private JPanel createNavigationPanel(){
         JPanel panel= new JPanel( new GridLayout( 6, 1 ) );
         panel.setSize( 70, 800 );
-        
+
         Image monitorIcon, graphIcon, settingsIcon, troubleCodesIcon, exitIcon, terminalIcon;
         try{
-            monitorIcon= ImageIO.read( new File("Monitor.png")); 
-            JButton monitorBtn = new JButton( new ImageIcon(monitorIcon.getScaledInstance( 84, 84,  java.awt.Image.SCALE_SMOOTH )) );
-            graphIcon= ImageIO.read( new File("Graph.png")); 
-            JButton graphBtn = new JButton( new ImageIcon(graphIcon.getScaledInstance( 84, 84,  java.awt.Image.SCALE_SMOOTH )) );
-            settingsIcon= ImageIO.read( new File("Settings.png")); 
-            JButton settingsBtn = new JButton( new ImageIcon(settingsIcon.getScaledInstance( 84, 84,  java.awt.Image.SCALE_SMOOTH )) );
-            troubleCodesIcon= ImageIO.read( new File("TroubleCodes.png")); 
-            troubleCodesBtn = new JButton( new ImageIcon(troubleCodesIcon.getScaledInstance( 84, 84,  java.awt.Image.SCALE_SMOOTH )) );
-            troubleCodesBtn.addActionListener( listener ->{
+            monitorIcon= ImageIO.read( new File( "Monitor.png" ) );
+            JButton monitorBtn= new JButton(
+                    new ImageIcon( monitorIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+            graphIcon= ImageIO.read( new File( "Graph.png" ) );
+            JButton graphBtn=
+                    new JButton( new ImageIcon( graphIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+            settingsIcon= ImageIO.read( new File( "Settings.png" ) );
+            JButton settingsBtn= new JButton(
+                    new ImageIcon( settingsIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+            troubleCodesIcon= ImageIO.read( new File( "TroubleCodes.png" ) );
+            troubleCodesBtn= new JButton(
+                    new ImageIcon( troubleCodesIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+            troubleCodesBtn.addActionListener( listener -> {
                 new TroubleCodesDialog( this );
-            }
-            );
-            exitIcon= ImageIO.read( new File("exit.png")); 
-            JButton exitBtn = new JButton( new ImageIcon(exitIcon.getScaledInstance( 84, 84,  java.awt.Image.SCALE_SMOOTH )) );
-            terminalIcon= ImageIO.read( new File("Terminal.png")); 
-            JButton terminalBtn = new JButton( new ImageIcon(terminalIcon.getScaledInstance( 84, 84,  java.awt.Image.SCALE_SMOOTH )) );
-            
-            
-            panel.add( troubleCodesBtn);
-            panel.add( monitorBtn);
-            panel.add( graphBtn);  
+            } );
+            exitIcon= ImageIO.read( new File( "exit.png" ) );
+            JButton exitBtn=
+                    new JButton( new ImageIcon( exitIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+            terminalIcon= ImageIO.read( new File( "Terminal.png" ) );
+            JButton terminalBtn= new JButton(
+                    new ImageIcon( terminalIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+
+            panel.add( troubleCodesBtn );
+            panel.add( monitorBtn );
+            panel.add( graphBtn );
             panel.add( terminalBtn );
             panel.add( settingsBtn );
             panel.add( exitBtn );
-            
+
         }catch (IOException e){
             System.out.println( "B³¹d podczas dodawania ikon do panelu nawigacji" );
             e.printStackTrace();
         }
-        
+
         return panel;
     }
-    
-    private void setUIManagerParameters() {
+
+    private void setUIManagerParameters(){
         UIManager.put( "Button.background", Color.yellow );
         UIManager.put( "Button.higlight", Color.darkGray );
-        
-        
+
     }
-    
+
     private void createCenterPanel(){
-        centralPanel = new JPanel();
-        
+        centralPanel= new JPanel();
+
     }
 
     private JMenuBar createMenuBar(){

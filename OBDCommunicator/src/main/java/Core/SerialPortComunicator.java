@@ -4,6 +4,7 @@ package Core;
 
 import gnu.io.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,8 +37,8 @@ public class SerialPortComunicator{
     private SerialPort serialPort;
     private SerialWriter serialWriter;
     private SerialReader serialReader;
-    ScheduledExecutorService scheduler= Executors.newScheduledThreadPool( 1 );
-
+    private ScheduledExecutorService scheduler= Executors.newScheduledThreadPool( 1 );
+    private File communicatorFile = new File( "communicator.txt" );
     public SerialPortComunicator(){}
 
     @SuppressWarnings("restriction")
@@ -104,16 +105,40 @@ public class SerialPortComunicator{
             outStream= null;
         }
     }
-
-    public Response sendAndGetResponse( Command command ){
+    //return result with bytes
+    public Response sendAndGetResponse( String command ){
         Response result= new Response();
-        send( command.getCommunicate() );
+        send( command );
         try {
         Thread.sleep( 15 );
         List<byte[]> buffers= serialReader.getBuffers();
         byte[] buffer= Utils.getBufferWithRequestData( buffers );
         serialReader.clearBuffers();
         List<Byte> data= getBufferAsList( buffer );
+        result.setBytes( data );
+        }catch(Exception e) {
+            result.addError( new Error( e.toString() ));
+        }
+        
+        return result;
+    }
+    //return result with decimal value and bytes
+    public Response sendAndGetResponse( Command command, boolean writeToCommunicatorFile ){
+        Response result= new Response();
+        send( command.getCommunicate() );
+        try {
+        Thread.sleep( 3 );
+        List<byte[]> buffers= serialReader.getBuffers();
+        byte[] buffer= Utils.getBufferWithRequestData( buffers );
+        System.out.println( Utils.getStringFromByteArray( buffer ) );
+        ///TODO w chuj chujowe rozwi¹zanie
+        if(Utils.getRealBufferLength( buffer ) < 4) {
+            result.addError( new Error( "no data" ) );
+            return result;
+        }
+        serialReader.clearBuffers();
+        List<Byte> data= getBufferAsList( buffer );
+        result.setBytes( data );
         BigDecimal decimalValue = command.getDecimalValue( data );
         if(data.size() != 0 && decimalValue != null){
             result.setDecimalValue( decimalValue );

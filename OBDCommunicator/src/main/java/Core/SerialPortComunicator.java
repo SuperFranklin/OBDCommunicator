@@ -35,22 +35,22 @@ import gnu.io.UnsupportedCommOperationException;
  */
 public class SerialPortComunicator{
 
-    private Service service ;
+    private Service service;
     private OutputStream outStream;
     private InputStream inStream;
     private SerialPort serialPort;
     private SerialReader serialReader;
-    private File communicatorFile = new File( "communicator.txt" );
-    
+    private File communicatorFile= new File( "communicator.txt" );
+
     public SerialPortComunicator(){}
-    
+
     public Response conncet( String portName )
             throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException{
 
-        service = FactoryService.getService();
+        service= FactoryService.getService();
         Response result= new Response();
         CommPortIdentifier portIdentifier= CommPortIdentifier.getPortIdentifier( portName );
-        
+
         if(portIdentifier.isCurrentlyOwned()){
             result.addError( new Error( "Error: Port is currently in use" ) );
         }else{
@@ -86,7 +86,6 @@ public class SerialPortComunicator{
         try{
             outStream.write( data.getBytes() );
             outStream.flush();
-            
 
         }catch (IOException e){
             e.printStackTrace();
@@ -95,100 +94,105 @@ public class SerialPortComunicator{
     }
 
     @SuppressWarnings("restriction")
-    public void close(){
-        try{
-            serialPort.getOutputStream().flush();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-
+    public Response close(){
+        Response response= new Response();
         if(serialPort != null){
+            try{
+                serialPort.getOutputStream().flush();
+            }catch (IOException e){
+                response.addError( new Error( e.toString() ) );
+            }
             serialPort.close();
             inStream= null;
             outStream= null;
+        }else{
+            response.addError( new Error( "Brak po³¹czenia z portem szeregowym" ) );
         }
+        return response;
     }
-    //return result with bytes
+
+    // return result with bytes
     public synchronized Response sendAndGetResponse( String command ){
         Response result= new Response();
-        send( command+"\r" );
-        try {
-        Thread.sleep( 500 );
-        byte[] buffer= serialReader.getBuffer();
-        serialReader.clearBuffers();
-        List<Byte> data= getBufferAsList( buffer );
-        result.setBytes( data );
-        }catch(Exception e) {
-            result.addError( new Error( e.toString() ));
+        send( command + "\r" );
+        try{
+            Thread.sleep( 500 );
+            byte[] buffer= serialReader.getBuffer();
+            serialReader.clearBuffers();
+            List<Byte> data= getBufferAsList( buffer );
+            result.setBytes( data );
+        }catch (Exception e){
+            result.addError( new Error( e.toString() ) );
         }
-        
+
         return result;
     }
-    
+
     public Map<String, String> getDTCMap(){
-        
-        Map<String, String> map = new HashMap<>();
-        List<String> result = new ArrayList();
-        Response response = sendAndGetResponse( "03" );
-        List<Byte> bytes = response.getBytes();
+
+        Map<String, String> map= new HashMap<>();
+        List<String> result= new ArrayList();
+        Response response= sendAndGetResponse( "03" );
+        List<Byte> bytes= response.getBytes();
         bytes.remove( 0 );
         bytes.remove( 0 );
-        bytes = Utils.removeRedundantCharacters( bytes );
+        bytes= Utils.removeRedundantCharacters( bytes );
         int modulo;
         System.out.println( Utils.getStringFromBytes( bytes ) );
-        for(int i=0;i<bytes.size();i++) {
-            modulo = i%14;
-            if(modulo==0 || modulo==1) bytes.set( i, (byte) 0);
-            
+        for(int i= 0; i < bytes.size(); i++){
+            modulo= i % 14;
+            if(modulo == 0 || modulo == 1) bytes.set( i, ( byte ) 0 );
+
         }
-        Iterator<Byte> it = bytes.iterator();
-        while(it.hasNext()) {
-            Byte b = it.next();
-            if(b.byteValue() == (byte) 0) it.remove();
+        Iterator<Byte> it= bytes.iterator();
+        while (it.hasNext()){
+            Byte b= it.next();
+            if(b.byteValue() == ( byte ) 0) it.remove();
         }
         System.out.println( Utils.getStringFromBytes( bytes ) );
-        byte[] code = new byte[4];
-        for(int x=0;x<=bytes.size()/4;x++) {
-        for(int i=0;i<4;i++) {
-            code[i] = bytes.get( i ).byteValue();
-        }
-        bytes.remove( 0 );
-        bytes.remove( 0 );
-        bytes.remove( 0 );
-        bytes.remove( 0 );
-        
-        String codeTxt = new String(code);
-        map.put(codeTxt, DTCUtils.getTroubleCodeDesc( codeTxt ));
+        byte[] code= new byte[ 4 ];
+        for(int x= 0; x <= bytes.size() / 4; x++){
+            for(int i= 0; i < 4; i++){
+                code[ i ]= bytes.get( i ).byteValue();
+            }
+            bytes.remove( 0 );
+            bytes.remove( 0 );
+            bytes.remove( 0 );
+            bytes.remove( 0 );
+
+            String codeTxt= new String( code );
+            map.put( codeTxt, DTCUtils.getTroubleCodeDesc( codeTxt ) );
         }
         return map;
     }
-    //return result with decimal value and bytes
+
+    // return result with decimal value and bytes
     public Response sendAndGetResponse( Command command, boolean writeToCommunicatorFile ){
         Response result= new Response();
         send( command.getCommunicate() );
-        try {
-        Thread.sleep( 200 );
-        byte[] buffer= serialReader.getBuffer();
-        System.out.println( Utils.getStringFromByteArray( buffer ) );
-        ///TODO w chuj chujowe rozwi¹zanie
-        if(Utils.getRealBufferLength( buffer ) < 4) {
-            result.addError( new Error( "no data" ) );
-            return result;
-        }
-        List<Byte> data= getBufferAsList( buffer );
-        result.setBytes( data );
-        BigDecimal decimalValue = command.getDecimalValue( data );
-        if(decimalValue != null){
-            result.setDecimalValue( decimalValue );
-        }else{
-            result.addError( new Error( "no data" ) );
-        }
-        }catch(Exception e) {
-            result.addError( new Error( e.toString() ));
-            System.out.print( "&"+System.currentTimeMillis() +" ## " );
+        try{
+            Thread.sleep( 200 );
+            byte[] buffer= serialReader.getBuffer();
+            System.out.println( Utils.getStringFromByteArray( buffer ) );
+            /// TODO w chuj chujowe rozwi¹zanie
+            if(Utils.getRealBufferLength( buffer ) < 4){
+                result.addError( new Error( "no data" ) );
+                return result;
+            }
+            List<Byte> data= getBufferAsList( buffer );
+            result.setBytes( data );
+            BigDecimal decimalValue= command.getDecimalValue( data );
+            if(decimalValue != null){
+                result.setDecimalValue( decimalValue );
+            }else{
+                result.addError( new Error( "no data" ) );
+            }
+        }catch (Exception e){
+            result.addError( new Error( e.toString() ) );
+            System.out.print( "&" + System.currentTimeMillis() + " ## " );
             e.printStackTrace();
         }
-        
+
         return result;
     }
 
@@ -200,11 +204,9 @@ public class SerialPortComunicator{
         }
         return result;
     }
-    
-    public SerialPort getConnectedSerialPort() {
+
+    public SerialPort getConnectedSerialPort(){
         return serialPort;
     }
-    
-
 
 }

@@ -37,8 +37,8 @@ public class Service{
     }
 
 
-    public void closePort(){
-        serialPortComunicator.close();
+    public Response closePort(){
+        return serialPortComunicator.close();
     }
 
     /*

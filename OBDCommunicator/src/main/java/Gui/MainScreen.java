@@ -7,6 +7,7 @@ import javax.swing.*;
 
 import Core.Service;
 import Utils.FactoryService;
+import Utils.Response;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,18 +34,20 @@ public class MainScreen extends JFrame{
     public MainScreen(){
 
         super( "OBD Explorer" );
+        
         setLayout( new BorderLayout() );
         setUIManagerParameters();
         container= getContentPane();
         container.setLayout( new BorderLayout() );
         frame= this;
 
-        setSize( 1350, 750 );
+        setSize( 800, 600 );
         setResizable( false );
         setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
         add( createMenuBar(), BorderLayout.NORTH );
         add( createCenterPanel(), BorderLayout.CENTER );
         add( createNavigationPanel(), BorderLayout.WEST );
+        setLocationRelativeTo( null );
         setVisible( true );
 
     }
@@ -127,7 +130,7 @@ public class MainScreen extends JFrame{
         centralPanel= new JPanel();
         centralPanel.setLayout( null );
         connectionPanel= createConnectionPanel();
-        connectionPanel.setLocation( 1000, 0 );
+        connectionPanel.setLocation( 460, 0 );
         centralPanel.add( connectionPanel );
 
         return centralPanel;
@@ -161,7 +164,11 @@ public class MainScreen extends JFrame{
         menuItem.addActionListener( new ActionListener(){
 
             public void actionPerformed( ActionEvent e ){
-                service.closePort();
+                Response result = service.closePort();
+                if(result.hasErrors()) {
+                    JOptionPane.showMessageDialog( null, result.getErrorAsString(), "OBDExplorer communicate",
+                            JOptionPane.WARNING_MESSAGE );
+                }
 
             }
         } );

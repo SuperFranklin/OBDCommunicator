@@ -105,6 +105,7 @@ public class SerialPortComunicator{
             serialPort.close();
             inStream= null;
             outStream= null;
+            service.setConnectionPanelParameters( "", "Disconnected", "" );
         }else{
             response.addError( new Error( "Brak po³¹czenia z portem szeregowym" ) );
         }
@@ -189,8 +190,6 @@ public class SerialPortComunicator{
             }
         }catch (Exception e){
             result.addError( new Error( e.toString() ) );
-            System.out.print( "&" + System.currentTimeMillis() + " ## " );
-            e.printStackTrace();
         }
 
         return result;

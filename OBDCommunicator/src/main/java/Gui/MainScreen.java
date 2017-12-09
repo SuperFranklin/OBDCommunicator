@@ -48,6 +48,7 @@ public class MainScreen extends JFrame{
         add( createCenterPanel(), BorderLayout.CENTER );
         add( createNavigationPanel(), BorderLayout.WEST );
         setLocationRelativeTo( null );
+        initLogo();
         setVisible( true );
 
     }
@@ -67,6 +68,7 @@ public class MainScreen extends JFrame{
         JLabel lblConnectionStatus= new JLabel( "Status po³¹czenia: " );
         panel.add( lblConnectionStatus );
         fldConnectionStatus= new JLabel();
+        fldConnectionStatus.setText( "Disconnected" );
         panel.add( fldConnectionStatus );
         JLabel lblBaudRate= new JLabel( "Prêdkoœæ transmisji: " );
         panel.add( lblBaudRate );
@@ -226,6 +228,18 @@ public class MainScreen extends JFrame{
         } );
 
         return menuItem;
+    }
+    
+    private void initLogo() {
+        
+        Image img= null;
+        try{
+            img= ImageIO.read( new File( "Logo.png" ) );
+            setIconImage(img);
+        }catch (IOException e){
+            JOptionPane.showMessageDialog( this, "Brak pliku z logo aplikacji" );
+        }
+        
     }
 
     public Service getService(){

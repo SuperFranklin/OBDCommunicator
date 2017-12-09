@@ -175,7 +175,7 @@ public class SerialPortComunicator{
             Thread.sleep( 200 );
             byte[] buffer= serialReader.getBuffer();
             System.out.println( Utils.getStringFromByteArray( buffer ) );
-            /// TODO w chuj chujowe rozwi¹zanie
+            /// TODO poprawiæ, bo to bardzo prymitywne i tylko do testów
             if(Utils.getRealBufferLength( buffer ) < 4){
                 result.addError( new Error( "no data" ) );
                 return result;

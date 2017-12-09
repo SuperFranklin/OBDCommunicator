@@ -15,7 +15,7 @@ import Utils.FactoryService;
 public class OBDCommunicator {
 
     public static void main(String ...args){
-        new MainScreen();
+        FactoryService.getDisplayer();
         
     }
 }

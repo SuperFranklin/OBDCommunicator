@@ -15,6 +15,7 @@ import javax.swing.event.DocumentEvent.EventType;
 import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import Utils.FactoryService;
+import Utils.Utils;
 
 public class SerialReader implements SerialPortEventListener{
 
@@ -31,25 +32,25 @@ public class SerialReader implements SerialPortEventListener{
     @SuppressWarnings("restriction")
     public void serialEvent( SerialPortEvent event ){
         int data;
-        buffer= new byte[ 20 ];
-        if(event.getEventType() == 1){
-
+        
+        //if(event.getEventType() == 1){
+            System.out.println("&"+System.currentTimeMillis() +" ## "+ event.toString() );
+            buffer= new byte[ 64 ];    
             try{
                 int len= 0;
                 while ((data= in.read()) > -1){
-                    if(data == '\n'){
-                        break;
-                    }
+                    /*if(data == '\n'){
+                       // break;
+                    }*/
                     
                     buffer[ len++ ]= ( byte ) data;
                 }
-                
-                buffers.add( buffer );          
+                System.out.println("&"+System.currentTimeMillis() +" ## "+  Utils.getStringFromByteArray( buffer ) );
                 
             }catch (IOException e){
-                System.out.println( " System reader error : " + e );
+                System.out.println("&"+System.currentTimeMillis() +" ## "+  " System reader error : " + e );
             }
-        }
+        //}
     }
     
     private String bufferToString( byte[] buffer) {
@@ -62,6 +63,9 @@ public class SerialReader implements SerialPortEventListener{
 
     public List<byte[]> getBuffers(){
         return buffers;
+    }
+    public byte[] getBuffer() {
+        return buffer;
     }
 
     public void clearBuffers(){

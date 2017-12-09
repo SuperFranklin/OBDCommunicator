@@ -30,12 +30,13 @@ public abstract class Command{
     public abstract BigDecimal getDecimalValue( List<Byte> bytes );
 
     public boolean checkPIDs( List<Byte> bytes ){
-        byte[] pidBytes= PID.getBytes();
+        /*byte[] pidBytes= PID.getBytes();
         //TODO obs³u¿yc przypadek, gdy rozmiar bytes <4
         if(pidBytes[ 0 ] == bytes.get( 2 ).byteValue() && pidBytes[ 1 ] == bytes.get( 3 ).byteValue()){
             return true;
         }
-        return false;
+        return false;*/
+        return true;
 
     }
 
@@ -48,7 +49,7 @@ public abstract class Command{
     }
 
     public String getCommunicate(){
-        return communicate + "\r";
+        return communicate + "\r\n";
     }
 
     public void setCommunicate( String communicate ){

@@ -23,27 +23,21 @@ public class RPMCommand extends Command{
 
     public BigDecimal getDecimalValue( List<Byte> bytes ){
         float value;
-        
         Utils.removeSpaces( bytes );
-        if(bytes.size()>5 && checkPIDs( bytes )){ 
+        Utils.removeRedundantCharacters( bytes );
+        //System.out.println( bytes );
+        if(checkPIDs( bytes )){ 
             Utils.removeRequestBytes( bytes );
-
-            Utils.removeRedundantCharacters( bytes );
-
+            System.out.println( "----------------------------------------------------------------------------------------------" );
+            System.out.println("&"+System.currentTimeMillis() +" ## "+  parameterName );
+            System.out.println("&"+System.currentTimeMillis() +" ## "+ "czyste :"+ bytes );
             List<Integer> ints= Utils.getIntArray( bytes );
-            if(ints.size() >3 ) {
+            System.out.println("&"+System.currentTimeMillis() +" ## "+  "ints ->" +ints );
                 value= (ints.get( 0 ) * 4096 + ints.get( 1 ) * 256 + ints.get( 2 ) * 16 + ints.get( 3 )) / 4;
                 return new BigDecimal( value );
-            }
-            else {
-                System.out.println( "ints : byte = "+bytes );
-                for( Integer xz : ints) {
-                    System.out.print( xz +", " );
-                }
-                
-            }
+            
         }
-        
+        System.out.println( "NPE error bytes : " + bytes);
         return null;
 
     }

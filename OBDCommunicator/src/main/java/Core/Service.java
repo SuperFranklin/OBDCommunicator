@@ -12,7 +12,7 @@ import Gui.TerminalDialog;
 import Utils.Error;
 import Utils.FactoryService;
 import Utils.Response;
-
+import gnu.io.*;
 public class Service{
 
     SerialPortComunicator serialPortComunicator= FactoryService.getSerialPortComunicator();
@@ -35,12 +35,6 @@ public class Service{
         return response;
     }
 
-    public List<TroubleCode> getListOfTroubleCodes(){
-        List<TroubleCode> result= new ArrayList<TroubleCode>();
-        //Response r= serialPortComunicator.sendAndGetResponse( "03" );
-
-        return result;
-    }
 
     public void closePort(){
         serialPortComunicator.close();
@@ -56,6 +50,19 @@ public class Service{
     
     public Response sendAndGetResponse( String command) {
         return serialPortComunicator.sendAndGetResponse( command );
+    }
+    
+    public SerialPort getConnectedSerialPort() {
+        return serialPortComunicator.getConnectedSerialPort();
+        
+    }
+    public void setConnectionPanelParameters(String portName, String status, String boudRate) {
+        displayer = FactoryService.getDisplayer();
+        displayer.setConnectionPanelParameters( portName, boudRate, status );
+    }
+    
+    public List<String> getListOfTroubleCodes(){
+        return serialPortComunicator.getListOfTroubleCodes();
     }
     
 

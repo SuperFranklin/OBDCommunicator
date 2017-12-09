@@ -21,6 +21,12 @@ public class MainScreen extends JFrame{
     private ActualParametersDialog actualParametersDialog;
     private Container container;
     private JPanel centralPanel;
+    private JPanel connectionPanel;
+
+    /// connectionPanel
+    private JLabel fldPortName;
+    private JLabel fldConnectionStatus;
+    private JLabel fldBoudRate;
 
     private JButton troubleCodesBtn;
 
@@ -33,11 +39,11 @@ public class MainScreen extends JFrame{
         container.setLayout( new BorderLayout() );
         frame= this;
 
-        setSize( Toolkit.getDefaultToolkit().getScreenSize() );
-
+        setSize( 1350, 750 );
+        setResizable( false );
         setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
         add( createMenuBar(), BorderLayout.NORTH );
-
+        add( createCenterPanel(), BorderLayout.CENTER );
         add( createNavigationPanel(), BorderLayout.WEST );
         setVisible( true );
 
@@ -50,14 +56,27 @@ public class MainScreen extends JFrame{
     }
 
     private JPanel createConnectionPanel(){
-        JPanel panel= new JPanel( new BoxLayout( this , BoxLayout.LINE_AXIS ));
+        JPanel panel= new JPanel( new GridLayout( 3, 2 ) );
+        JLabel lblPortName= new JLabel( "Nazwa portu: " );
+        panel.add( lblPortName );
+        fldPortName= new JLabel();
+        panel.add( fldPortName );
+        JLabel lblConnectionStatus= new JLabel( "Status po³¹czenia: " );
+        panel.add( lblConnectionStatus );
+        fldConnectionStatus= new JLabel();
+        panel.add( fldConnectionStatus );
+        JLabel lblBaudRate= new JLabel( "Prêdkoœæ transmisji: " );
+        panel.add( lblBaudRate );
+        fldBoudRate= new JLabel();
+        panel.add( fldBoudRate );
+        panel.setSize( new Dimension( 270, 120 ) );
 
         return panel;
     }
 
     private JPanel createNavigationPanel(){
         JPanel panel= new JPanel( new GridLayout( 6, 1 ) );
-        panel.setSize( 70, 800 );
+        panel.setSize( 70, 750 );
 
         Image monitorIcon, graphIcon, settingsIcon, troubleCodesIcon, exitIcon, terminalIcon;
         try{
@@ -104,9 +123,14 @@ public class MainScreen extends JFrame{
 
     }
 
-    private void createCenterPanel(){
+    private JPanel createCenterPanel(){
         centralPanel= new JPanel();
+        centralPanel.setLayout( null );
+        connectionPanel= createConnectionPanel();
+        connectionPanel.setLocation( 1000, 0 );
+        centralPanel.add( connectionPanel );
 
+        return centralPanel;
     }
 
     private JMenuBar createMenuBar(){
@@ -203,6 +227,13 @@ public class MainScreen extends JFrame{
 
     public TerminalDialog getTerminalDialog(){
         return terminalDialog;
+    }
+
+    public void setConnectionPanelParameters( String portName, String boudRate, String status ){
+
+        if( portName != null ) fldPortName.setText( portName );
+        if( boudRate != null ) fldBoudRate.setText( boudRate);
+        if( status != null ) fldConnectionStatus.setText( status );
     }
 
 }

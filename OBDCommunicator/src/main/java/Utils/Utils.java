@@ -14,6 +14,10 @@ public class Utils{
         list.remove( 0 );
         list.remove( 0 );
         list.remove( 0 );
+        list.remove( 0 );
+        list.remove( 0 );
+        list.remove( 0 );
+        list.remove( 0 );
 
         return list;
     }

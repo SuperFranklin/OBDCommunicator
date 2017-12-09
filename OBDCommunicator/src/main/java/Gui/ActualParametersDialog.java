@@ -54,7 +54,7 @@ public class ActualParametersDialog extends JDialog{
             readingThrad= new Thread( r );
             readingThrad.start();
         }catch (InterruptedException e){
-            System.out.println( "ActualParametersDialog error constructor = " + e );
+            System.out.println( "&"+System.currentTimeMillis() +" ## "+ "ActualParametersDialog error constructor = " + e );
         }
 
     }
@@ -139,12 +139,21 @@ public class ActualParametersDialog extends JDialog{
             while (running){
                 for(Command c : map.keySet()){
                     Response response= service.sendAndGetResponse( c );
+                    try{
+                        Thread.sleep( 300 );
+                    }catch (InterruptedException e){
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    System.out.println( "send and get response parameter :" +c.getParameterName() );
                     if(!response.hasErrors()){
                         map.put( c, response.getDecimalValue() );
                     }else{
-                        System.out.println( "Actual Parameters Dialog run() method error -> "+response.getErrorAsString() );
+                        System.out.println("&"+System.currentTimeMillis() +" ## "+ "Actual Parameters Dialog run() method error -> "+response.getErrorAsString() );
                     }
-
+                    
+                    
+                    
                     int actualRow= rowsMap.get( c );
                     table.getModel().setValueAt( c.getParameterName(), actualRow, 0 );
                     table.getModel().setValueAt( map.get( c ), actualRow, 1 );

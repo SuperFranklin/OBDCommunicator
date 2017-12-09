@@ -14,6 +14,7 @@ public class SerialWriter implements Runnable {
             int c = 0;
             while ((c = System.in.read()) > -1) {
                 this.outputStream.write(c);
+                outputStream.flush();
             }
         } catch (IOException e) {
             System.out.println(" Serial Writer error : " + e);

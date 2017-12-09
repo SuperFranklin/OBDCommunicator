@@ -4,6 +4,7 @@ package Core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import Commands.Command;
 import Entities.TroubleCode;
@@ -61,8 +62,8 @@ public class Service{
         displayer.setConnectionPanelParameters( portName, boudRate, status );
     }
     
-    public List<String> getListOfTroubleCodes(){
-        return serialPortComunicator.getListOfTroubleCodes();
+    public Map<String, String> getDTCMap(){
+        return serialPortComunicator.getDTCMap();
     }
     
 

@@ -7,14 +7,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.security.Policy.Parameters;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TooManyListenersException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import Commands.Command;
+import DAO.DTCUtils;
 import Utils.Error;
 import Utils.FactoryService;
 import Utils.Response;
@@ -31,31 +35,22 @@ import gnu.io.UnsupportedCommOperationException;
  */
 public class SerialPortComunicator{
 
-    @SuppressWarnings("unused")
     private Service service ;
     private OutputStream outStream;
     private InputStream inStream;
-    @SuppressWarnings("restriction")
     private SerialPort serialPort;
-    //private SerialWriter serialWriter;
     private SerialReader serialReader;
-    private ScheduledExecutorService scheduler= Executors.newScheduledThreadPool( 1 );
     private File communicatorFile = new File( "communicator.txt" );
-    private int boudRate = 9600;
-    
     
     public SerialPortComunicator(){}
-
     
-    @SuppressWarnings("restriction")
-    Response conncet( String portName )
+    public Response conncet( String portName )
             throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException{
 
         service = FactoryService.getService();
         Response result= new Response();
-
         CommPortIdentifier portIdentifier= CommPortIdentifier.getPortIdentifier( portName );
-
+        
         if(portIdentifier.isCurrentlyOwned()){
             result.addError( new Error( "Error: Port is currently in use" ) );
         }else{
@@ -64,12 +59,11 @@ public class SerialPortComunicator{
             if(commPort instanceof SerialPort){
 
                 serialPort= ( SerialPort ) commPort;
-                serialPort.setSerialPortParams( 38400, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+                serialPort.setSerialPortParams( Core.Parameters.boudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
                         SerialPort.PARITY_NONE );
 
                 inStream= serialPort.getInputStream();
                 outStream= serialPort.getOutputStream();
-                //serialWriter= new SerialWriter( outStream );
                 serialReader= new SerialReader( inStream );
 
                 try{
@@ -84,7 +78,7 @@ public class SerialPortComunicator{
                 result.addError( new Error( " Port nie jest portem szeregowym" ) );
             }
         }
-        service.setConnectionPanelParameters( portName, "connected", Integer.toString( boudRate ) );
+        service.setConnectionPanelParameters( portName, "connected", Integer.toString( Core.Parameters.boudRate ) );
         return result;
     }
 
@@ -119,7 +113,7 @@ public class SerialPortComunicator{
         Response result= new Response();
         send( command+"\r" );
         try {
-        Thread.sleep( 80 );
+        Thread.sleep( 500 );
         byte[] buffer= serialReader.getBuffer();
         serialReader.clearBuffers();
         List<Byte> data= getBufferAsList( buffer );
@@ -131,26 +125,42 @@ public class SerialPortComunicator{
         return result;
     }
     
-    public List<String> getListOfTroubleCodes(){
+    public Map<String, String> getDTCMap(){
+        
+        Map<String, String> map = new HashMap<>();
         List<String> result = new ArrayList();
         Response response = sendAndGetResponse( "03" );
         List<Byte> bytes = response.getBytes();
+        bytes.remove( 0 );
+        bytes.remove( 0 );
+        bytes = Utils.removeRedundantCharacters( bytes );
         int modulo;
         System.out.println( Utils.getStringFromBytes( bytes ) );
         for(int i=0;i<bytes.size();i++) {
-            modulo = i%8;
-            if(modulo==0 || modulo==1) bytes.set( i, new Byte( "0" ));
+            modulo = i%14;
+            if(modulo==0 || modulo==1) bytes.set( i, (byte) 0);
             
         }
         Iterator<Byte> it = bytes.iterator();
         while(it.hasNext()) {
             Byte b = it.next();
-            if(b.byteValue() == 48) it.remove();
+            if(b.byteValue() == (byte) 0) it.remove();
         }
         System.out.println( Utils.getStringFromBytes( bytes ) );
+        byte[] code = new byte[4];
+        for(int x=0;x<=bytes.size()/4;x++) {
+        for(int i=0;i<4;i++) {
+            code[i] = bytes.get( i ).byteValue();
+        }
+        bytes.remove( 0 );
+        bytes.remove( 0 );
+        bytes.remove( 0 );
+        bytes.remove( 0 );
         
-        
-        return result;
+        String codeTxt = new String(code);
+        map.put(codeTxt, DTCUtils.getTroubleCodeDesc( codeTxt ));
+        }
+        return map;
     }
     //return result with decimal value and bytes
     public Response sendAndGetResponse( Command command, boolean writeToCommunicatorFile ){
@@ -158,7 +168,6 @@ public class SerialPortComunicator{
         send( command.getCommunicate() );
         try {
         Thread.sleep( 200 );
-        //List<byte[]> buffers= serialReader.getBuffers();
         byte[] buffer= serialReader.getBuffer();
         System.out.println( Utils.getStringFromByteArray( buffer ) );
         ///TODO w chuj chujowe rozwi¹zanie
@@ -166,18 +175,16 @@ public class SerialPortComunicator{
             result.addError( new Error( "no data" ) );
             return result;
         }
-        //serialReader.clearBuffers();
         List<Byte> data= getBufferAsList( buffer );
         result.setBytes( data );
         BigDecimal decimalValue = command.getDecimalValue( data );
-        //System.out.println( decimalValue );
         if(decimalValue != null){
             result.setDecimalValue( decimalValue );
         }else{
             result.addError( new Error( "no data" ) );
         }
         }catch(Exception e) {
-            //result.addError( new Error( e.prin ));
+            result.addError( new Error( e.toString() ));
             System.out.print( "&"+System.currentTimeMillis() +" ## " );
             e.printStackTrace();
         }

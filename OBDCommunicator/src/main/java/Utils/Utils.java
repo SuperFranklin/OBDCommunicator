@@ -138,4 +138,9 @@ public class Utils{
         return new String( array );
 
     }
+    
+    public static String byteToBites(byte b) {
+        String s =("0000000" + Integer.toBinaryString(0xFF & b)).replaceAll(".*(.{8})$", "$1");
+        return s;
+    }
 }

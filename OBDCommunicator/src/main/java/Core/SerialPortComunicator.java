@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import Commands.Command;
-import DAO.DTCUtils;
+import DAO.DTCUtil;
 import Utils.Error;
 import Utils.FactoryService;
 import Utils.Response;
@@ -162,7 +162,7 @@ public class SerialPortComunicator{
             bytes.remove( 0 );
 
             String codeTxt= new String( code );
-            map.put( codeTxt, DTCUtils.getTroubleCodeDesc( codeTxt ) );
+            map.put( codeTxt, DTCUtil.getTroubleCodeDesc( codeTxt ) );
         }
         return map;
     }

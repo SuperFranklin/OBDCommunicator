@@ -7,7 +7,7 @@ import javax.sql.rowset.CachedRowSet;
 import DataBase.DBProvider;
 import Gui.TroubleCodesDialog;
 
-public class DTCUtils{
+public class DTCUtil{
     
     public static String getTroubleCodeDesc( String code ) {
         String result = new String( "");

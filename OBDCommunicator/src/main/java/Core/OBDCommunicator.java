@@ -4,8 +4,10 @@ import java.sql.SQLException;
 
 import javax.sql.rowset.CachedRowSet;
 
-import DAO.DTCUtils;
+import DAO.DTCUtil;
+import DAO.ParameterUtil;
 import DataBase.DBProvider;
+import Enums.Parameter;
 import Gui.MainScreen;
 import Utils.FactoryService;
 
@@ -16,6 +18,7 @@ public class OBDCommunicator {
 
     public static void main(String ...args){
         FactoryService.getDisplayer();
+        System.out.println( ParameterUtil.getParameterValue( Parameter.filePath ) );
         
     }
 }

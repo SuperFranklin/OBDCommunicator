@@ -1,26 +1,25 @@
+
 package Commands;
+
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import Enums.OBDUnit;
-import Utils.Utils;
+import Utils.ByteUtils;
 
 public class EngineLoadCommand extends Command{
 
     public EngineLoadCommand(){
-        super("01" , "04");
+        super( "01", "04" );
         parameterName = "Obci¹¿enie silnika";
         unit = OBDUnit.percent;
     }
-    
-    public BigDecimal getDecimalValue( List<Byte> bytes ){
+
+    @Override
+    protected float computeValue( List<Integer> ints ){
         float value;
-        Utils.removeRedundantCharacters(bytes);
-        Utils.removeRequestBytes(bytes);
-        List< Integer > ints = Utils.getIntArray(  bytes );
-        value = (ints.get( 0 )*100)/255;
-        return new BigDecimal(value);
+        value = (ints.get( 0 ) * 100) / 255;
+        return value;
     }
-    
 }

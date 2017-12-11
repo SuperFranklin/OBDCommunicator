@@ -10,10 +10,8 @@ public class FuelPressureCommand extends Command{
     }
 
     @Override
-    public BigDecimal getDecimalValue( List<Byte> bytes ){
+    protected float computeValue( List<Integer> ints ){
         // TODO Auto-generated method stub
-        return null;
+        return 0;
     }
-    
-
 }

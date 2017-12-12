@@ -8,6 +8,7 @@ public class Response {
     private List<Error> errors = new ArrayList<Error>(); 
     private List<Byte> bytes;
     private BigDecimal decimalValue;
+    private Object result;
     public Response() {
         
     }
@@ -20,6 +21,10 @@ public class Response {
         return false;
     }
     
+    public Object getResult() {
+        return result;
+    }
+    
     public List<Error> getErrors(){
         return errors;
     }
@@ -30,6 +35,13 @@ public class Response {
     }
     public void addError(Error arg) {
         errors.add(arg);
+    }
+    
+    public void addError( String msg ) {
+        errors.add( new Error( msg ) );
+    }
+    public void addErrors( List<Error> errors) {
+        this.errors = errors;
     }
     
 

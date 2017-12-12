@@ -142,17 +142,13 @@ public class ActualParametersDialog extends JDialog{
                     try{
                         Thread.sleep( 300 );
                     }catch (InterruptedException e){
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    System.out.println( "send and get response parameter :" +c.getParameterName() );
                     if(!response.hasErrors()){
                         map.put( c, response.getDecimalValue() );
                     }else{
                         System.out.println("&"+System.currentTimeMillis() +" ## "+ "Actual Parameters Dialog run() method error -> "+response.getErrorAsString() );
                     }
-                    
-                    
                     
                     int actualRow= rowsMap.get( c );
                     table.getModel().setValueAt( c.getParameterName(), actualRow, 0 );

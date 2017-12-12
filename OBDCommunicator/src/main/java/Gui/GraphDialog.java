@@ -39,7 +39,7 @@ public class GraphDialog extends JDialog{
     private JComboBox<String> comboBox;
     private GraphWorker graphWorker;
     private SwingWrapper<XYChart> sw;
-    private Service service = FactoryService.getService();
+    private Service service= FactoryService.getService();
     private XYChart chart;
     private GridBagConstraints constraints;
 
@@ -54,20 +54,20 @@ public class GraphDialog extends JDialog{
         setSize( 250, 250 );
         setTitle( "Poka¿ aktualne parametry na wykresie" );
         setLayout( new GridBagLayout() );
-        constraints = new GridBagConstraints();
+        constraints= new GridBagConstraints();
         comboBox= createComboBox();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 0;
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        add(comboBox, constraints);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 0;
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        add( createOpenBtn(), constraints);
-        //add( comboBox, BorderLayout.NORTH );
-        //add( createOpenBtn(), BorderLayout.CENTER );
+        constraints.fill= GridBagConstraints.HORIZONTAL;
+        constraints.weightx= 0;
+        constraints.gridx= 0;
+        constraints.gridy= 0;
+        add( comboBox, constraints );
+        constraints.fill= GridBagConstraints.HORIZONTAL;
+        constraints.weightx= 0;
+        constraints.gridx= 0;
+        constraints.gridy= 1;
+        add( createOpenBtn(), constraints );
+        // add( comboBox, BorderLayout.NORTH );
+        // add( createOpenBtn(), BorderLayout.CENTER );
         setVisible( true );
     }
 
@@ -127,39 +127,39 @@ public class GraphDialog extends JDialog{
         }
 
         @Override
-        protected Boolean doInBackground() {
+        protected Boolean doInBackground(){
 
-            int n = 0;
+            int n= 0;
             while (!isCancelled()){
 
-                Response response = service.sendAndGetResponse( new RPMCommand());
+                Response response= service.sendAndGetResponse( new RPMCommand() );
                 try{
                     Thread.sleep( 200 );
                 }catch (InterruptedException e){
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                if(response.getDecimalValue() != null) {
-                fifo.add( response.getDecimalValue());
-                System.out.println( n++ );
-                
-                if(fifo.size() > 100){
-                    fifo.removeFirst();
+                if(response.getDecimalValue() != null){
+                    fifo.add( response.getDecimalValue() );
+                    System.out.println( n++ );
+
+                    if(fifo.size() > 100){
+                        fifo.removeFirst();
+                    }
+
+                    double[] array= new double[ fifo.size() ];
+                    for(int i= 0; i < fifo.size(); i++){
+                        array[ i ]= fifo.get( i ).doubleValue();
+                        System.out.println( response.getDecimalValue() + ", " + fifo.get( i ) + " ," + array[ i ] );
+
+                    }
+                    publish( array );
+                    System.out.println( array );
                 }
 
-                double[] array= new double[ fifo.size() ];
-                for(int i= 0; i < fifo.size(); i++){
-                    array[ i ]= fifo.get( i ).doubleValue();
-                    System.out.println( response.getDecimalValue() + ", "+fifo.get( i ) + " ," +  array[ i ]  );
-                    
-                }
-                publish( array );
-                System.out.println( array );
-                }
-                
             }
             return true;
-            
+
         }
 
         @Override

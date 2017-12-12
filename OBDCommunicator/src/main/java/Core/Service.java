@@ -14,9 +14,10 @@ import Utils.Error;
 import Utils.FactoryService;
 import Utils.Response;
 import gnu.io.*;
+
 public class Service{
 
-    SerialPortComunicator serialPortComunicator= FactoryService.getSerialPortComunicator();
+    SerialPortComunicator serialPortComunicator = FactoryService.getSerialPortComunicator();
     MainScreen displayer;
     TerminalDialog terminalDialog;
 
@@ -27,15 +28,14 @@ public class Service{
     }
 
     public Response connect( String portNumber ){
-        Response response= new Response();
+        Response response = new Response();
         try{
-            response= serialPortComunicator.conncet( portNumber );
+            response = serialPortComunicator.conncet( portNumber );
         }catch (Exception e){
             response.addError( new Error( "Service, connect error : " + e ) );
         }
         return response;
     }
-
 
     public Response closePort(){
         return serialPortComunicator.close();
@@ -46,25 +46,28 @@ public class Service{
      */
 
     public Response sendAndGetResponse( Command command ){
-        return serialPortComunicator.sendAndGetResponse( command,  true );
+        return serialPortComunicator.sendAndGetResponse( command, true );
     }
-    
-    public Response sendAndGetResponse( String command) {
+
+    public Response sendAndGetResponse( String command ){
         return serialPortComunicator.sendAndGetResponse( command );
     }
-    
-    public SerialPort getConnectedSerialPort() {
+
+    public SerialPort getConnectedSerialPort(){
         return serialPortComunicator.getConnectedSerialPort();
-        
     }
-    public void setConnectionPanelParameters(String portName, String status, String boudRate) {
+
+    public void setConnectionPanelParameters( String portName, String status, String boudRate ){
         displayer = FactoryService.getDisplayer();
         displayer.setConnectionPanelParameters( portName, boudRate, status );
     }
-    
+
     public Map<String, String> getDTCMap(){
         return serialPortComunicator.getDTCMap();
     }
-    
+
+    public String getPortName(){
+        return serialPortComunicator.getSerialPort().getName();
+    }
 
 }

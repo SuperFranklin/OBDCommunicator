@@ -6,7 +6,8 @@ public enum OBDUnit {
     rmp,
     percent,
     degrees,
-    celciusDegrees
+    celciusDegrees,
+    gramPerSecond
     ;
      
     public static String getText(OBDUnit unit) {
@@ -25,6 +26,8 @@ public enum OBDUnit {
                 return "°";
             case celciusDegrees :
                 return "°C";
+            case gramPerSecond :
+                return "g/s";
         }
         
         return result;

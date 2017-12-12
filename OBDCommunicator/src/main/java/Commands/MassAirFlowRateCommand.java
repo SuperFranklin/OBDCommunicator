@@ -11,7 +11,7 @@ public class MassAirFlowRateCommand extends Command{
     public MassAirFlowRateCommand(){
         super( "01", "10" );
         parameterName = "Natê¿enie przep³ywu powietrza";
-        unit = OBDUnit.rmp;
+        unit = OBDUnit.gramPerSecond;
     }
 
     protected float computeValue( List<Integer> ints ){

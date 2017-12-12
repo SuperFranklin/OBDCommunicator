@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Utils{
+public class ByteUtils{
 
-    public static List<Byte> removeRequestBytes( List<Byte> list ){
+    public static List<Byte> removeRequestBytes( List<Byte> list){
         list.remove( 0 );
         list.remove( 0 );
         list.remove( 0 );
@@ -52,7 +52,7 @@ public class Utils{
             // TODO tutaj tez œrednie rozwi¹zanie, powinno to byæ jakos skuteczniej rozwi¹zane, bo czasami
             // przechodzi pusty bufor
             if(getRealBufferLength( buffer ) > 7 && bufferIsNoData( buffer )
-                    && !Utils.bufferContainNegativByte( buffer )){
+                    && !ByteUtils.bufferContainNegativByte( buffer )){
                 return buffer;
             }
 
@@ -78,7 +78,7 @@ public class Utils{
         return false;
     }
 
-    public static List<Integer> getIntArray( List<Byte> list ){
+    public static List<Integer> getNumberArray( List<Byte> list ){
         List<Integer> result= new ArrayList<Integer>();
         for(Byte b : list){
             int i= byteToInt( b );

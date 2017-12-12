@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import Core.Parameters;
 import Core.Service;
 import Utils.Response;
-import Utils.Utils;
+import Utils.ByteUtils;
 
 public class TerminalDialog extends JDialog{
 
@@ -68,7 +68,7 @@ public class TerminalDialog extends JDialog{
 
             public void actionPerformed( ActionEvent e ){
                 Response response= service.sendAndGetResponse( fldMessage.getText() );
-                String txt= Utils.getStringFromBytes( response.getBytes() );
+                String txt= ByteUtils.getStringFromBytes( response.getBytes() );
                 setText( txt );
             }
         } );

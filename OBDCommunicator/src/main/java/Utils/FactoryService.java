@@ -17,30 +17,23 @@ public class FactoryService{
     public static Service getService(){
 
         if(service == null){
-            service= new Service();
+            service = new Service();
         }
+        service.setSerialPortComunicator( getSerialPortComunicator() );
         return service;
     }
 
-    /*public static DBProvider getDBProvider(){
-        if(dbProvider == null) {
-            dbProvider = new DBProvider();
-        }
-        return dbProvider;
-    }*/
-
     public static MainScreen getDisplayer(){
         if(displayer == null){
-            displayer= new MainScreen();
-
+            displayer = new MainScreen();
         }
+        
         return displayer;
     }
 
     public static SerialPortComunicator getSerialPortComunicator(){
         if(serialPortComunicator == null){
-            serialPortComunicator= new SerialPortComunicator();
-
+            serialPortComunicator = new SerialPortComunicator(service);
         }
         return serialPortComunicator;
     }

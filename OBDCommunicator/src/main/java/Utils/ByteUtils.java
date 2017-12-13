@@ -8,16 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ByteUtils{
+    
+    private final static int REQUEST_BYTES =8;
 
     public static List<Byte> removeRequestBytes( List<Byte> list){
-        list.remove( 0 );
-        list.remove( 0 );
-        list.remove( 0 );
-        list.remove( 0 );
-        list.remove( 0 );
-        list.remove( 0 );
-        list.remove( 0 );
-        list.remove( 0 );
+        
+        for(int i=0; i< REQUEST_BYTES; i++) {
+            list.remove( 0 );
+        }
 
         return list;
     }

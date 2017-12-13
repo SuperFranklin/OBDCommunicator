@@ -22,6 +22,7 @@ import javax.swing.SpringLayout;
 
 import org.w3c.dom.css.Counter;
 
+import Core.Message;
 import Core.Service;
 import Utils.Response;
 
@@ -29,6 +30,7 @@ public class ConnectDialog extends JDialog{
     private MainScreen parent;
     // private JTextField fldPortName= new JTextField( 10 );
     private JComboBox<String> portsComboBox = initComboBoxParameters();
+    private List<CommPortIdentifier> availablePorts;
     private JLabel lblPornName = new JLabel( "Nazwa portu" );
     private JLabel lblBoundRate = new JLabel( "Prêdkoœæ transmisji" );
     private Service service;
@@ -74,10 +76,16 @@ public class ConnectDialog extends JDialog{
     }
 
     private JComboBox<String> initComboBoxParameters(){
-        List<CommPortIdentifier> ports = getAvaiableSerialPorts();
-        String[] options = new String[ ports.size() ];
+        availablePorts = getAvaiableSerialPorts();
+        JComboBox<String> comboBox = new JComboBox<String>( createPortsComboBoxOptions() );
+
+        return comboBox;
+    }
+
+    private String[] createPortsComboBoxOptions(){
+        String[] options = new String[ availablePorts.size() ];
         Integer i = 0;
-        for(CommPortIdentifier c : ports){
+        for(CommPortIdentifier c : availablePorts){
             StringBuilder sb = new StringBuilder();
             sb.append( c.getName() );
             String currentOwner = c.getCurrentOwner();
@@ -89,46 +97,46 @@ public class ConnectDialog extends JDialog{
             options[ i++ ] = (sb.toString());
         }
 
-        JComboBox<String> comboBox = new JComboBox<String>( options );
-
-        return comboBox;
+        return options;
     }
 
     private List<CommPortIdentifier> getAvaiableSerialPorts(){
-
         List<CommPortIdentifier> list = new ArrayList<>();
+        CommPortIdentifier com;
 
-        Enumeration thePorts = CommPortIdentifier.getPortIdentifiers();
-        while (thePorts.hasMoreElements()){
-            CommPortIdentifier com = ( CommPortIdentifier ) thePorts.nextElement();
-            switch (com.getPortType()){
-                case CommPortIdentifier.PORT_SERIAL:
-                    list.add( com );
-
+        Enumeration ports = CommPortIdentifier.getPortIdentifiers();
+        while (ports.hasMoreElements()){
+            com = ( CommPortIdentifier ) ports.nextElement();
+            if(com.getPortType() == CommPortIdentifier.PORT_SERIAL){
+                list.add( com );
             }
         }
         return list;
     }
 
     private JButton createConnectBtn(){
-        JButton button = new JButton( "Po³¹cz" );
-        button.addActionListener( new ActionListener(){
-
-            public void actionPerformed( ActionEvent e ){
-                Response response = parent.getService().connect( portsComboBox.getSelectedItem().toString() );
-                if(!response.hasErrors()){
-                    JOptionPane.showMessageDialog( parent,
-                            "Po³¹cznie zainicjalizowano na porcie : " + portsComboBox.getSelectedItem().toString() );
-                    parent.setConnectionPanelParameters( service.getPortName(),
-                            Integer.toString( Core.Parameters.boudRate ), "connected" );
-                    dispose();
-                }else{
-                    JOptionPane.showMessageDialog( parent, response.getErrorAsString(), "Connection Error",
-                            JOptionPane.WARNING_MESSAGE );
-                }
-            }
-        } );
+        JButton button = new JButton( Message.CONNECT );
+        button.addActionListener( createConnectBtnAL() );
         return button;
     }
 
+    private ActionListener createConnectBtnAL(){
+        ActionListener listener = new ActionListener(){
+
+            public void actionPerformed( ActionEvent e ){
+                String selectedItem = portsComboBox.getSelectedItem().toString();
+                Response response = service.connect( selectedItem );
+                if(!response.hasErrors()){
+                    JOptionPane.showMessageDialog( parent, Message.CONNECTION_INITIALIZED_ON_PORT + selectedItem );
+                    parent.setConnectionPanelParameters( selectedItem, Integer.toString( Core.Parameters.boudRate ),
+                            Message.CONNECTED );
+                    dispose();
+                }else{
+                    JOptionPane.showMessageDialog( parent, response.getErrorAsString(), Message.CONNECTION_ERROR,
+                            JOptionPane.WARNING_MESSAGE );
+                }
+            }
+        };
+        return listener;
+    }
 }

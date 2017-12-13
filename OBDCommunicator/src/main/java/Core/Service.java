@@ -2,18 +2,16 @@
 package Core;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 import java.util.Map;
 
 import Commands.Command;
-import Entities.TroubleCode;
 import Gui.MainScreen;
 import Gui.TerminalDialog;
 import Utils.Error;
 import Utils.FactoryService;
 import Utils.Response;
-import gnu.io.*;
+import gnu.io.SerialPort;
 
 public class Service{
 
@@ -23,8 +21,8 @@ public class Service{
 
     public Service(){}
 
-    public void sendBytes( String message ){
-        serialPortComunicator.send( message + "\r" );
+    public Response sendBytes( String message ){
+        return serialPortComunicator.sendCommunicate( message + "\r" );
     }
 
     public Response connect( String portNumber ){
@@ -32,18 +30,14 @@ public class Service{
         try{
             response = serialPortComunicator.conncet( portNumber );
         }catch (Exception e){
-            response.addError( new Error( "Service, connect error : " + e ) );
+            response.addError( new Error( e.toString() ) );
         }
         return response;
     }
 
     public Response closePort(){
-        return serialPortComunicator.close();
+        return serialPortComunicator.closePort();
     }
-
-    /*
-     * public void setResponseToTerminal(String txt) { displayer.getTerminalDialog().setText(txt); }
-     */
 
     public Response sendAndGetResponse( Command command ){
         return serialPortComunicator.sendAndGetResponse( command, true );
@@ -54,7 +48,7 @@ public class Service{
     }
 
     public SerialPort getConnectedSerialPort(){
-        return serialPortComunicator.getConnectedSerialPort();
+        return serialPortComunicator.getSerialPort();
     }
 
     public void setConnectionPanelParameters( String portName, String status, String boudRate ){
@@ -68,6 +62,30 @@ public class Service{
 
     public String getPortName(){
         return serialPortComunicator.getSerialPort().getName();
+    }
+
+    public SerialPortComunicator getSerialPortComunicator(){
+        return serialPortComunicator;
+    }
+
+    public void setSerialPortComunicator( SerialPortComunicator serialPortComunicator ){
+        this.serialPortComunicator = serialPortComunicator;
+    }
+
+    public MainScreen getDisplayer(){
+        return displayer;
+    }
+
+    public void setDisplayer( MainScreen displayer ){
+        this.displayer = displayer;
+    }
+
+    public TerminalDialog getTerminalDialog(){
+        return terminalDialog;
+    }
+
+    public void setTerminalDialog( TerminalDialog terminalDialog ){
+        this.terminalDialog = terminalDialog;
     }
 
 }

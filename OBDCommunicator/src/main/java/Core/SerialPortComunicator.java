@@ -17,6 +17,8 @@ import java.util.TooManyListenersException;
 import Commands.Command;
 import DAO.DTCUtil;
 import Exceptions.SerialPortException;
+import Gui.MainScreen;
+import Gui.TerminalDialog;
 import Utils.ByteUtils;
 import Utils.Error;
 import Utils.FactoryService;
@@ -28,7 +30,7 @@ import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
-public class SerialPortComunicator{
+public class SerialPortComunicator {
 
     private Service service;
     private OutputStream outStream;
@@ -38,16 +40,18 @@ public class SerialPortComunicator{
     private File communicatorFile = new File( "communicator.txt" );
     private CommPortIdentifier portIdentifier;
     private CommPort commPort = null;
+    private final static int TIMEOUT = 2000;
 
-    public SerialPortComunicator(){}
+    public SerialPortComunicator( Service service ){
+        this.service = service;
+    }
 
     public Response conncet( String portName ) throws Exception{
         Response result = new Response();
-        service = FactoryService.getService();
 
         portIdentifier = CommPortIdentifier.getPortIdentifier( portName );
         if(portIdentifier.isCurrentlyOwned()){
-            result.addError( new Error( "Port is currently in use" ) );
+            result.addError( new Error( Message.PORT_IS_CURRENTLY_USED ) );
         }else{
             try{
                 initConnection();
@@ -59,14 +63,14 @@ public class SerialPortComunicator{
     }
 
     private void initConnection() throws Exception{
-        commPort = portIdentifier.open( this.getClass().getName(), 8 );
+        commPort = portIdentifier.open( this.getClass().getName(), TIMEOUT );
         if(commPort instanceof SerialPort){
             serialPort = ( SerialPort ) commPort;
             setSerialPortParameters();
             initStreams();
             addEventListener();
         }else{
-            throw new SerialPortException( "Port nie jest portem szeregowym" );
+            throw new SerialPortException( Message.PORT_IS_NOT_SERIAL );
         }
     }
 
@@ -86,18 +90,19 @@ public class SerialPortComunicator{
         serialReader = new SerialReader( inStream );
     }
 
-    public void send( String data ){
-        try{
-            outStream.write( data.getBytes() );
-            outStream.flush();
-
-        }catch (IOException e){
-            e.printStackTrace();
+    public Response sendCommunicate( String msg ){
+        Response result = new Response();
+        try {
+        outStream.write( msg.getBytes() );
+        outStream.flush();
+        }catch (Exception e) {
+            result.addError( e.toString() );
         }
+        return result;
     }
 
     @SuppressWarnings("restriction")
-    public Response close(){
+    public Response closePort(){
         Response response = new Response();
         if(serialPort != null){
             try{
@@ -108,9 +113,9 @@ public class SerialPortComunicator{
             serialPort.close();
             inStream = null;
             outStream = null;
-            service.setConnectionPanelParameters( "", "Disconnected", "" );
+            service.setConnectionPanelParameters( "", Message.DISCONNECTED, "" );
         }else{
-            response.addError( new Error( "Brak po³¹czenia z portem szeregowym" ) );
+            response.addError( new Error( Message.NO_CONNECTION ) );
         }
         return response;
     }
@@ -118,9 +123,9 @@ public class SerialPortComunicator{
     // return result with bytes
     public synchronized Response sendAndGetResponse( String command ){
         Response result = new Response();
-        send( command + "\r" );
-        sleep( 500 );
         try{
+            sendCommunicate( command + "\r" );
+            sleep( 500 );
             byte[] buffer = serialReader.getBuffer();
             serialReader.clearBuffers();
             List<Byte> data = getBufferAsList( buffer );
@@ -173,23 +178,17 @@ public class SerialPortComunicator{
     // return result with decimal value and bytes
     public Response sendAndGetResponse( Command command, boolean writeToCommunicatorFile ){
         Response result = new Response();
-        send( command.getCommunicate() );
-        sleep( 200 );
         try{
+            sendCommunicate( command.getCommunicate() );
+            sleep( 200 );
             byte[] buffer = serialReader.getBuffer();
-            System.out.println( ByteUtils.getStringFromByteArray( buffer ) );
-            /// TODO poprawiæ, bo to bardzo prymitywne i tylko do testów
-            if(ByteUtils.getRealBufferLength( buffer ) < 4){
-                result.addError( new Error( "no data" ) );
-                return result;
-            }
             List<Byte> data = getBufferAsList( buffer );
             result.setBytes( data );
             BigDecimal decimalValue = command.parseAndGetDecimalValue( data );
             if(decimalValue != null){
                 result.setDecimalValue( decimalValue );
             }else{
-                result.addError( new Error( "no data" ) );
+                result.addError( new Error( Message.NO_DATA ) );
             }
         }catch (Exception e){
             result.addError( new Error( e.toString() ) );
@@ -213,14 +212,11 @@ public class SerialPortComunicator{
         }catch (InterruptedException e){}
     }
 
-    public SerialPort getConnectedSerialPort(){
-        return serialPort;
-    }
 
     public SerialPort getSerialPort(){
         return serialPort;
     }
-    
-    
+
+ 
 
 }

@@ -16,110 +16,144 @@ import java.io.File;
 import java.io.IOException;
 
 public class MainScreen extends JFrame{
+    
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
+    private static final Dimension CONNECTION_PANEL_DIMENSION = new Dimension( 270, 120 );
+    private static final Dimension NAVIGATION_PANEL_DIMENSION = new Dimension( 70, 750 );
+    
     JFrame frame;
-    private Service service= FactoryService.getService();
+    
+    private Service service = FactoryService.getService();
     private TerminalDialog terminalDialog;
     private ActualParametersDialog actualParametersDialog;
     private Container container;
     private JPanel centralPanel;
-    private JPanel connectionPanel;
+    
 
     /// connectionPanel
+    private JPanel connectionPanel;
     private JLabel fldPortName;
     private JLabel fldConnectionStatus;
     private JLabel fldBoudRate;
 
+    // NavigationPanel
+    private JPanel navigationPanel;
+    private Image monitorIcon , graphIcon , settingsIcon , troubleCodesIcon , exitIcon , terminalIcon;
+    private JButton monitorBtn;
     private JButton troubleCodesBtn;
+    private JButton graphBtn;
+    private JButton settingsBtn;
+    private JButton terminalBtn;
+    private JButton exitBtn;
+    
 
     public MainScreen(){
-
         super( "OBD Explorer" );
-        
+        frame = this;
+
+        initGui();
+        addComponents();
+
+        setVisible( true );
+    }
+
+    private void initGui(){
         setLayout( new BorderLayout() );
         setUIManagerParameters();
-        container= getContentPane();
+        container = getContentPane();
         container.setLayout( new BorderLayout() );
-        frame= this;
-
-        setSize( 800, 600 );
+        setSize( WIDTH, HEIGHT );
         setResizable( false );
         setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
+        setLocationRelativeTo( null );
+        addLogo();
+
+    }
+
+    private void addComponents(){
         add( createMenuBar(), BorderLayout.NORTH );
         add( createCenterPanel(), BorderLayout.CENTER );
         add( createNavigationPanel(), BorderLayout.WEST );
-        setLocationRelativeTo( null );
-        initLogo();
-        setVisible( true );
 
-    }
-
-    private JPanel createNorthPanel(){
-        JPanel panel= new JPanel();
-
-        return panel;
     }
 
     private JPanel createConnectionPanel(){
-        JPanel panel= new JPanel( new GridLayout( 3, 2 ) );
-        JLabel lblPortName= new JLabel( "Nazwa portu: " );
-        panel.add( lblPortName );
-        fldPortName= new JLabel();
-        panel.add( fldPortName );
-        JLabel lblConnectionStatus= new JLabel( "Status po³¹czenia: " );
-        panel.add( lblConnectionStatus );
-        fldConnectionStatus= new JLabel();
+        JPanel panel = new JPanel( new GridLayout( 3, 2 ) );
+
+        JLabel lblPortName = new JLabel( "Nazwa portu: " );
+        JLabel lblConnectionStatus = new JLabel( "Status po³¹czenia: " );
+        JLabel lblBaudRate = new JLabel( "Prêdkoœæ transmisji: " );
+
+        fldPortName = new JLabel();
+        fldConnectionStatus = new JLabel();
         fldConnectionStatus.setText( "Disconnected" );
+
+        fldBoudRate = new JLabel();
+        panel.add( lblPortName );
+        panel.add( fldPortName );
+        panel.add( lblConnectionStatus );
         panel.add( fldConnectionStatus );
-        JLabel lblBaudRate= new JLabel( "Prêdkoœæ transmisji: " );
         panel.add( lblBaudRate );
-        fldBoudRate= new JLabel();
         panel.add( fldBoudRate );
-        panel.setSize( new Dimension( 270, 120 ) );
+        panel.setSize( CONNECTION_PANEL_DIMENSION );
 
         return panel;
     }
 
     private JPanel createNavigationPanel(){
-        JPanel panel= new JPanel( new GridLayout( 6, 1 ) );
-        panel.setSize( 70, 750 );
+        navigationPanel = new JPanel( new GridLayout( 6, 1 ) );
+        navigationPanel.setSize( NAVIGATION_PANEL_DIMENSION );
+        loadNavigationPanelImages();
+        initNavigationPanelButtons();
+        addActionListenersToNavigationPanel();
+        addComponentsToNavigationPanel();
 
-        Image monitorIcon, graphIcon, settingsIcon, troubleCodesIcon, exitIcon, terminalIcon;
+        return navigationPanel;
+    }
+
+    private void loadNavigationPanelImages(){
         try{
-            monitorIcon= ImageIO.read( new File( "Monitor.png" ) );
-            JButton monitorBtn= new JButton(
-                    new ImageIcon( monitorIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
-            graphIcon= ImageIO.read( new File( "Graph.png" ) );
-            JButton graphBtn=
-                    new JButton( new ImageIcon( graphIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
-            settingsIcon= ImageIO.read( new File( "Settings.png" ) );
-            JButton settingsBtn= new JButton(
-                    new ImageIcon( settingsIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
-            troubleCodesIcon= ImageIO.read( new File( "TroubleCodes.png" ) );
-            troubleCodesBtn= new JButton(
-                    new ImageIcon( troubleCodesIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
-            troubleCodesBtn.addActionListener( listener -> {
-                new TroubleCodesDialog( this );
-            } );
-            exitIcon= ImageIO.read( new File( "exit.png" ) );
-            JButton exitBtn=
-                    new JButton( new ImageIcon( exitIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
-            terminalIcon= ImageIO.read( new File( "Terminal.png" ) );
-            JButton terminalBtn= new JButton(
-                    new ImageIcon( terminalIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
-
-            panel.add( troubleCodesBtn );
-            panel.add( monitorBtn );
-            panel.add( graphBtn );
-            panel.add( terminalBtn );
-            panel.add( settingsBtn );
-            panel.add( exitBtn );
-
+            monitorIcon = ImageIO.read( new File( "Monitor.png" ) );
+            graphIcon = ImageIO.read( new File( "Graph.png" ) );
+            settingsIcon = ImageIO.read( new File( "Settings.png" ) );
+            troubleCodesIcon = ImageIO.read( new File( "TroubleCodes.png" ) );
+            terminalIcon = ImageIO.read( new File( "Terminal.png" ) );
+            exitIcon = ImageIO.read( new File( "exit.png" ) );
         }catch (IOException e){
-            System.out.println( "B³¹d podczas dodawania ikon do panelu nawigacji" );
+            JOptionPane.showMessageDialog( this, "B³¹d podczas dodawania ikon do panelu nawigacji" );
             e.printStackTrace();
         }
+    }
 
-        return panel;
+    private void initNavigationPanelButtons(){
+        monitorBtn =
+                new JButton( new ImageIcon( monitorIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+        graphBtn = new JButton( new ImageIcon( graphIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+        settingsBtn =
+                new JButton( new ImageIcon( settingsIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+        troubleCodesBtn = new JButton(
+                new ImageIcon( troubleCodesIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+        exitBtn = new JButton( new ImageIcon( exitIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+        terminalBtn =
+                new JButton( new ImageIcon( terminalIcon.getScaledInstance( 84, 84, java.awt.Image.SCALE_SMOOTH ) ) );
+    }
+
+    // to Navigation Panel
+    private void addActionListenersToNavigationPanel(){
+        troubleCodesBtn.addActionListener( listener->{
+            new TroubleCodesDialog( this );
+        } );
+    }
+
+    // navigationPanel
+    private void addComponentsToNavigationPanel(){
+        navigationPanel.add( troubleCodesBtn );
+        navigationPanel.add( monitorBtn );
+        navigationPanel.add( graphBtn );
+        navigationPanel.add( terminalBtn );
+        navigationPanel.add( settingsBtn );
+        navigationPanel.add( exitBtn );
     }
 
     private void setUIManagerParameters(){
@@ -129,9 +163,9 @@ public class MainScreen extends JFrame{
     }
 
     private JPanel createCenterPanel(){
-        centralPanel= new JPanel();
+        centralPanel = new JPanel();
         centralPanel.setLayout( null );
-        connectionPanel= createConnectionPanel();
+        connectionPanel = createConnectionPanel();
         connectionPanel.setLocation( 460, 0 );
         centralPanel.add( connectionPanel );
 
@@ -139,14 +173,14 @@ public class MainScreen extends JFrame{
     }
 
     private JMenuBar createMenuBar(){
-        JMenuBar menuBar= new JMenuBar();
-        JMenu connectionMenu= new JMenu( "Po³¹czenia" );
-        JMenu serviceMenu= new JMenu( "Us³ugi" );
-        JMenu settingsMenu= new JMenu( "Ustawienia" );
-        JMenu helpMenu= new JMenu( "Pomoc" );
+        JMenuBar menuBar = new JMenuBar();
+        JMenu connectionMenu = new JMenu( "Po³¹czenia" );
+        JMenu serviceMenu = new JMenu( "Us³ugi" );
+        JMenu settingsMenu = new JMenu( "Ustawienia" );
+        JMenu helpMenu = new JMenu( "Pomoc" );
         UIManager.put( "MenuItem.font", new Font( Font.SERIF, Font.BOLD, 14 ) );
         UIManager.put( "MenuBar.font", new Font( Font.SERIF, Font.BOLD, 16 ) );
-        SwingUtilities.updateComponentTreeUI( frame );
+        SwingUtilities.updateComponentTreeUI( this );
         connectionMenu.add( createConnectMenuItem() );
         connectionMenu.add( createCloseConnectionMenuItem() );
 
@@ -162,12 +196,12 @@ public class MainScreen extends JFrame{
     }
 
     private JMenuItem createCloseConnectionMenuItem(){
-        JMenuItem menuItem= new JMenuItem( "Zakoñcz po³¹czenie" );
+        JMenuItem menuItem = new JMenuItem( "Zakoñcz po³¹czenie" );
         menuItem.addActionListener( new ActionListener(){
 
             public void actionPerformed( ActionEvent e ){
                 Response result = service.closePort();
-                if(result.hasErrors()) {
+                if(result.hasErrors()){
                     JOptionPane.showMessageDialog( null, result.getErrorAsString(), "OBDExplorer communicate",
                             JOptionPane.WARNING_MESSAGE );
                 }
@@ -178,7 +212,7 @@ public class MainScreen extends JFrame{
     }
 
     private JMenuItem createConnectMenuItem(){
-        JMenuItem menuItem= new JMenuItem( "Po³¹cz" );
+        JMenuItem menuItem = new JMenuItem( "Po³¹cz" );
         menuItem.addActionListener( new ActionListener(){
 
             public void actionPerformed( ActionEvent e ){
@@ -190,7 +224,7 @@ public class MainScreen extends JFrame{
     }
 
     private JMenuItem createGraphsMenuItem(){
-        JMenuItem menuItem= new JMenuItem( "Wykresy" );
+        JMenuItem menuItem = new JMenuItem( "Wykresy" );
         menuItem.addActionListener( new ActionListener(){
 
             public void actionPerformed( ActionEvent e ){
@@ -207,11 +241,11 @@ public class MainScreen extends JFrame{
     }
 
     private JMenuItem createTerminalMenuItem(){
-        JMenuItem menuItem= new JMenuItem( "Terminal" );
+        JMenuItem menuItem = new JMenuItem( "Terminal" );
         menuItem.addActionListener( new ActionListener(){
 
             public void actionPerformed( ActionEvent e ){
-                terminalDialog= new TerminalDialog( frame );
+                terminalDialog = new TerminalDialog( frame );
             }
         } );
 
@@ -219,27 +253,27 @@ public class MainScreen extends JFrame{
     }
 
     private JMenuItem createActualParametersMenuItem(){
-        JMenuItem menuItem= new JMenuItem( "Bierz¹ce parametry" );
+        JMenuItem menuItem = new JMenuItem( "Bierz¹ce parametry" );
         menuItem.addActionListener( new ActionListener(){
 
             public void actionPerformed( ActionEvent e ){
-                actualParametersDialog= new ActualParametersDialog( frame );
+                actualParametersDialog = new ActualParametersDialog( frame );
             }
         } );
 
         return menuItem;
     }
-    
-    private void initLogo() {
-        
-        Image img= null;
+
+    private void addLogo(){
+
+        Image img = null;
         try{
-            img= ImageIO.read( new File( "Logo.png" ) );
-            setIconImage(img);
+            img = ImageIO.read( new File( "Logo.png" ) );
+            setIconImage( img );
         }catch (IOException e){
             JOptionPane.showMessageDialog( this, "Brak pliku z logo aplikacji" );
         }
-        
+
     }
 
     public Service getService(){
@@ -252,9 +286,13 @@ public class MainScreen extends JFrame{
 
     public void setConnectionPanelParameters( String portName, String boudRate, String status ){
 
-        if( portName != null ) fldPortName.setText( portName );
-        if( boudRate != null ) fldBoudRate.setText( boudRate);
-        if( status != null ) fldConnectionStatus.setText( status );
+        if(portName != null) fldPortName.setText( portName );
+        if(boudRate != null) fldBoudRate.setText( boudRate );
+        if(status != null) fldConnectionStatus.setText( status );
+    }
+
+    public void setService( Service service ){
+        this.service = service;
     }
 
 }

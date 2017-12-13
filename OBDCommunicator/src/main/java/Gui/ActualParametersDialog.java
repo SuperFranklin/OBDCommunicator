@@ -2,7 +2,6 @@
 package Gui;
 
 
-import java.awt.GridLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.math.BigDecimal;
@@ -11,24 +10,18 @@ import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import Commands.Command;
 import Commands.EngineCoolantTemperature;
-import Commands.EngineLoadCommand;
-import Commands.IgnitionTimingCommand;
-import Commands.IntakeManifoldPressureCommand;
 import Commands.MassAirFlowRateCommand;
 import Commands.RPMCommand;
 import Commands.ThrottlePositionCommand;
 import Commands.VehicleSpeedCommand;
+import Core.Message;
 import Core.Service;
 import Enums.OBDUnit;
 import Utils.FactoryService;
@@ -36,76 +29,88 @@ import Utils.Response;
 
 public class ActualParametersDialog extends JDialog{
 
-    MainScreen displayer;
+    private static final int WIDTH = 600;
+    private static final int HIGHT = 500;
+
+    private MainScreen parent;
     private JTable table;
     private JScrollPane scrollPane;
-    private Service service= FactoryService.getService();
-    private Map<Command, BigDecimal> map= new HashMap<Command, BigDecimal>();
-    private Map<Command, Integer> rowsMap= new HashMap<Command, Integer>();
+    private Service service = FactoryService.getService();
+    private Map<Command, BigDecimal> parametersMap = new HashMap<Command, BigDecimal>();
+    private Map<Command, Integer> rowsMap = new HashMap<Command, Integer>();
     private Thread readingThrad;
-    private boolean running= true;
+    private boolean running = true;
 
     public ActualParametersDialog( JFrame frame ){
         super( frame );
-        displayer= ( MainScreen ) frame;
+        parent = ( MainScreen ) frame;
         try{
             initParameters();
-            initMap();
-            readingThrad= new Thread( r );
+            initParametersMap();
+            readingThrad = new Thread( r );
             readingThrad.start();
         }catch (InterruptedException e){
-            System.out.println( "&"+System.currentTimeMillis() +" ## "+ "ActualParametersDialog error constructor = " + e );
+            JOptionPane.showMessageDialog( parent, e.toString() );
         }
-
     }
 
-
     private void initParameters() throws InterruptedException{
-        setSize( 600, 500 );
-        table= new JTable();
-        table.setSize( 600, 500 );
-        table.setModel( new MyTableModel() );
-        scrollPane= new JScrollPane( table );
-        add( scrollPane );
-        addComponentListener( new ComponentAdapter(){
-
-            public void componentHidden( ComponentEvent e ){
-                running= false;
-                dispose();
-            }
-        } );
+        setSize( WIDTH, HIGHT );
+        initTable();
+        initWindowsListener();
 
         setVisible( true );
     }
 
-    private void initMap(){
+    private void initTable(){
+        table = new JTable();
+        table.setSize( WIDTH, HIGHT );
+        table.setModel( new MyTableModel() );
+        scrollPane = new JScrollPane( table );
+        add( scrollPane );
 
-        RPMCommand rpmCommand= new RPMCommand();
-        map.put( rpmCommand, new BigDecimal( 0 ) );
+    }
+
+    private void initWindowsListener(){
+        addComponentListener( new ComponentAdapter(){
+
+            public void componentHidden( ComponentEvent e ){
+                running = false;
+                dispose();
+            }
+        } );
+    }
+
+    private void initParametersMap(){
+
+        RPMCommand rpmCommand = new RPMCommand();
+        parametersMap.put( rpmCommand, new BigDecimal( 0 ) );
         rowsMap.put( rpmCommand, 0 );
 
-        EngineCoolantTemperature engineCoolntTemperature= new EngineCoolantTemperature();
-        map.put( engineCoolntTemperature, new BigDecimal( 0 ) );
+        EngineCoolantTemperature engineCoolntTemperature = new EngineCoolantTemperature();
+        parametersMap.put( engineCoolntTemperature, new BigDecimal( 0 ) );
         rowsMap.put( engineCoolntTemperature, 1 );
 
-        ThrottlePositionCommand throttlePositionCommand= new ThrottlePositionCommand();
-        map.put( throttlePositionCommand, new BigDecimal( 0 ) );
+        ThrottlePositionCommand throttlePositionCommand = new ThrottlePositionCommand();
+        parametersMap.put( throttlePositionCommand, new BigDecimal( 0 ) );
         rowsMap.put( throttlePositionCommand, 2 );
-        
-        VehicleSpeedCommand vehicleSpeedCommand= new VehicleSpeedCommand();
-        map.put( vehicleSpeedCommand, new BigDecimal( 0 ) );
+
+        VehicleSpeedCommand vehicleSpeedCommand = new VehicleSpeedCommand();
+        parametersMap.put( vehicleSpeedCommand, new BigDecimal( 0 ) );
         rowsMap.put( vehicleSpeedCommand, 3 );
-        
+
         MassAirFlowRateCommand massAirFlowRateCommand = new MassAirFlowRateCommand();
-        map.put( massAirFlowRateCommand, BigDecimal.ZERO );
+        parametersMap.put( massAirFlowRateCommand, BigDecimal.ZERO );
         rowsMap.put( massAirFlowRateCommand, 4 );
     }
 
     class MyTableModel extends AbstractTableModel{
 
-        private static final long serialVersionUID= 1L;
-        private String[] columnNames= {"Parametr", "Wartoœæ", "Jednostka" };
-        private Object[][] data= new Object[ 5 ][ 3 ];
+        private static final long serialVersionUID = 1L;
+        private static final int ROWS = 5;
+        private static final int COLUMNS = 3;
+        private String[] columnNames = {Message.PARAMETER, Message.VALUE, Message.UNIT };
+        private Object[][] data = new Object[ COLUMNS ][ ROWS ];
 
         public int getColumnCount(){
             return columnNames.length;
@@ -128,31 +133,29 @@ public class ActualParametersDialog extends JDialog{
         }
 
         public void setValueAt( Object value, int row, int col ){
-            data[ row ][ col ]= value;
+            data[ row ][ col ] = value;
             fireTableCellUpdated( row, col );
         }
 
     }
 
-    Runnable r= new Runnable(){
+    Runnable r = new Runnable(){
         public void run(){
             while (running){
-                for(Command c : map.keySet()){
-                    Response response= service.sendAndGetResponse( c );
+                for(Command c : parametersMap.keySet()){
+                    Response response = service.sendAndGetResponse( c );
                     try{
                         Thread.sleep( 300 );
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }
                     if(!response.hasErrors()){
-                        map.put( c, response.getDecimalValue() );
-                    }else{
-                        System.out.println("&"+System.currentTimeMillis() +" ## "+ "Actual Parameters Dialog run() method error -> "+response.getErrorAsString() );
+                        parametersMap.put( c, response.getDecimalValue() );
                     }
-                    
-                    int actualRow= rowsMap.get( c );
+
+                    int actualRow = rowsMap.get( c );
                     table.getModel().setValueAt( c.getParameterName(), actualRow, 0 );
-                    table.getModel().setValueAt( map.get( c ), actualRow, 1 );
+                    table.getModel().setValueAt( parametersMap.get( c ), actualRow, 1 );
                     table.getModel().setValueAt( OBDUnit.getText( c.getUnit() ), actualRow, 2 );
 
                 }

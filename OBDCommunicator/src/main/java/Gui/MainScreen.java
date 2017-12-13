@@ -5,6 +5,7 @@ package Gui;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import Core.Message;
 import Core.Service;
 import Utils.FactoryService;
 import Utils.Response;
@@ -16,20 +17,22 @@ import java.io.File;
 import java.io.IOException;
 
 public class MainScreen extends JFrame{
-    
+
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static final Dimension CONNECTION_PANEL_DIMENSION = new Dimension( 270, 120 );
     private static final Dimension NAVIGATION_PANEL_DIMENSION = new Dimension( 70, 750 );
-    
+    private static final String LOGO_FILEPATH ="Logo.png";
+
     JFrame frame;
-    
+
     private Service service = FactoryService.getService();
     private TerminalDialog terminalDialog;
     private ActualParametersDialog actualParametersDialog;
     private Container container;
     private JPanel centralPanel;
-    
+    private Image logo;
+
 
     /// connectionPanel
     private JPanel connectionPanel;
@@ -46,14 +49,13 @@ public class MainScreen extends JFrame{
     private JButton settingsBtn;
     private JButton terminalBtn;
     private JButton exitBtn;
-    
 
     public MainScreen(){
         super( "OBD Explorer" );
         frame = this;
 
         initGui();
-        addComponents();
+        addComponentsFrame();
 
         setVisible( true );
     }
@@ -71,7 +73,7 @@ public class MainScreen extends JFrame{
 
     }
 
-    private void addComponents(){
+    private void addComponentsFrame(){
         add( createMenuBar(), BorderLayout.NORTH );
         add( createCenterPanel(), BorderLayout.CENTER );
         add( createNavigationPanel(), BorderLayout.WEST );
@@ -80,16 +82,15 @@ public class MainScreen extends JFrame{
 
     private JPanel createConnectionPanel(){
         JPanel panel = new JPanel( new GridLayout( 3, 2 ) );
-
-        JLabel lblPortName = new JLabel( "Nazwa portu: " );
-        JLabel lblConnectionStatus = new JLabel( "Status po³¹czenia: " );
-        JLabel lblBaudRate = new JLabel( "Prêdkoœæ transmisji: " );
-
         fldPortName = new JLabel();
         fldConnectionStatus = new JLabel();
-        fldConnectionStatus.setText( "Disconnected" );
-
         fldBoudRate = new JLabel();
+        JLabel lblPortName = new JLabel( Message.PORT_NAME );
+        JLabel lblConnectionStatus = new JLabel( Message.CONNECTION_STATUS );
+        JLabel lblBaudRate = new JLabel( Message.BAUD_RATE );
+
+        fldConnectionStatus.setText( Message.DISCONNECTED );
+
         panel.add( lblPortName );
         panel.add( fldPortName );
         panel.add( lblConnectionStatus );
@@ -159,7 +160,8 @@ public class MainScreen extends JFrame{
     private void setUIManagerParameters(){
         UIManager.put( "Button.background", Color.yellow );
         UIManager.put( "Button.higlight", Color.darkGray );
-
+        UIManager.put( "MenuItem.font", new Font( Font.SERIF, Font.BOLD, 14 ) );
+        UIManager.put( "MenuBar.font", new Font( Font.SERIF, Font.BOLD, 16 ) );
     }
 
     private JPanel createCenterPanel(){
@@ -178,8 +180,7 @@ public class MainScreen extends JFrame{
         JMenu serviceMenu = new JMenu( "Us³ugi" );
         JMenu settingsMenu = new JMenu( "Ustawienia" );
         JMenu helpMenu = new JMenu( "Pomoc" );
-        UIManager.put( "MenuItem.font", new Font( Font.SERIF, Font.BOLD, 14 ) );
-        UIManager.put( "MenuBar.font", new Font( Font.SERIF, Font.BOLD, 16 ) );
+
         SwingUtilities.updateComponentTreeUI( this );
         connectionMenu.add( createConnectMenuItem() );
         connectionMenu.add( createCloseConnectionMenuItem() );
@@ -266,12 +267,11 @@ public class MainScreen extends JFrame{
 
     private void addLogo(){
 
-        Image img = null;
         try{
-            img = ImageIO.read( new File( "Logo.png" ) );
-            setIconImage( img );
+            logo = ImageIO.read( new File( LOGO_FILEPATH ) );
+            setIconImage( logo );
         }catch (IOException e){
-            JOptionPane.showMessageDialog( this, "Brak pliku z logo aplikacji" );
+            JOptionPane.showMessageDialog( this, Message.EMPTY_APPLICATION_LOGO_FILE );
         }
 
     }

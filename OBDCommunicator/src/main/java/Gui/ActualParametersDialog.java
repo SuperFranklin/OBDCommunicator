@@ -110,7 +110,7 @@ public class ActualParametersDialog extends JDialog{
         private static final int ROWS = 5;
         private static final int COLUMNS = 3;
         private String[] columnNames = {Message.PARAMETER, Message.VALUE, Message.UNIT };
-        private Object[][] data = new Object[ COLUMNS ][ ROWS ];
+        private Object[][] data = new Object[ ROWS ][ COLUMNS ];
 
         public int getColumnCount(){
             return columnNames.length;

@@ -4,6 +4,8 @@ package Gui;
 
 import gnu.io.*;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -27,24 +29,25 @@ import Core.Service;
 import Utils.Response;
 
 public class ConnectDialog extends JDialog{
+    
+    private static final Point LOCATION = new Point( 100, 100 );
+    private static final Dimension SIZE = new Dimension( 250, 250 );
+    
     private MainScreen parent;
-    // private JTextField fldPortName= new JTextField( 10 );
     private JComboBox<String> portsComboBox = initComboBoxParameters();
     private List<CommPortIdentifier> availablePorts;
-    private JLabel lblPornName = new JLabel( "Nazwa portu" );
-    private JLabel lblBoundRate = new JLabel( "Prêdkoœæ transmisji" );
+    private JLabel lblPornName = new JLabel( Message.PORT_NAME );
     private Service service;
     private JButton connectBtn = createConnectBtn();
-    private Container contentPane;
-    private SpringLayout layout;
 
     public ConnectDialog( JFrame frame ){
         super( frame );
         parent = ( MainScreen ) frame;
         service = parent.getService();
+        
         setLocationRelativeTo( null );
-        setLocation( 100, 100 );
-        setSize( 250, 250 );
+        setLocation( LOCATION );
+        setSize( SIZE );
         prepareGui();
 
         getAvaiableSerialPorts();
@@ -52,27 +55,17 @@ public class ConnectDialog extends JDialog{
     }
 
     private void prepareGui(){
-        contentPane = getContentPane();
-        layout = new SpringLayout();
-        setLayoutConstraints();
-
-        contentPane.setLayout( layout );
-        contentPane.setSize( 100, 100 );
-        contentPane.add( lblPornName );
-
-        contentPane.add( portsComboBox );
-        contentPane.add( connectBtn );
-
-    }
-
-    private void setLayoutConstraints(){
-        layout.putConstraint( SpringLayout.WEST, lblPornName, 5, SpringLayout.WEST, contentPane );
-        layout.putConstraint( SpringLayout.NORTH, lblPornName, 5, SpringLayout.NORTH, contentPane );
-        layout.putConstraint( SpringLayout.EAST, portsComboBox, 0, SpringLayout.EAST, contentPane );
-        layout.putConstraint( SpringLayout.NORTH, portsComboBox, 5, SpringLayout.NORTH, contentPane );
-        layout.putConstraint( SpringLayout.WEST, connectBtn, 80, SpringLayout.WEST, contentPane );
-        layout.putConstraint( SpringLayout.NORTH, connectBtn, 35, SpringLayout.NORTH, contentPane );
-
+        setLayout( null );
+        lblPornName.setSize( 90, 35 );
+        lblPornName.setLocation( 15, 25 );
+        portsComboBox.setSize( 95, 35 );
+        portsComboBox.setLocation( 125, 25 );
+        connectBtn.setSize( 200, 70 );
+        connectBtn.setLocation( 25, 100 );
+        
+        add( lblPornName );
+        add( portsComboBox );
+        add( connectBtn );
     }
 
     private JComboBox<String> initComboBoxParameters(){

@@ -23,7 +23,10 @@ import org.knowm.xchart.XYChart;
 import Commands.Command;
 import Commands.EngineLoadCommand;
 import Commands.IntakeManifoldPressureCommand;
+import Commands.MassAirFlowRateCommand;
 import Commands.RPMCommand;
+import Commands.VehicleSpeedCommand;
+import Core.Message;
 import Core.Service;
 import Utils.FactoryService;
 import Utils.Response;
@@ -71,11 +74,15 @@ public class GraphDialog extends JDialog{
         commands.put( rpmCommand.getParameterName(), rpmCommand );
         IntakeManifoldPressureCommand intakeManifoldPressureCommand = new IntakeManifoldPressureCommand();
         commands.put( intakeManifoldPressureCommand.getParameterName(), intakeManifoldPressureCommand );
+        VehicleSpeedCommand vehicleSpeedCommand = new VehicleSpeedCommand();
+        commands.put( vehicleSpeedCommand.getParameterName(), vehicleSpeedCommand );
+        MassAirFlowRateCommand massAirFlowRateCommand = new MassAirFlowRateCommand();
+        commands.put( massAirFlowRateCommand.getParameterName(), massAirFlowRateCommand );
 
     }
 
     private JButton createOpenBtn(){
-        JButton button = new JButton( "Poka¿ wykres parametru" );
+        JButton button = new JButton( Message.SHOW_PARAMETERS_GRAPH );
 
         button.addActionListener( e->{
             Runnable r = ()->{
@@ -97,7 +104,7 @@ public class GraphDialog extends JDialog{
     private void startGraphWorker(){
 
         // Create Chart
-        chart = QuickChart.getChart( comboBox.getSelectedItem().toString(), "Time", "Value", "randomWalk",
+        chart = QuickChart.getChart( comboBox.getSelectedItem().toString(), Message.TIME, Message.VALUE, "randomWalk",
                 new double[]{0 }, new double[]{0 } );
         chart.getStyler().setLegendVisible( false );
         chart.getStyler().setXAxisTicksVisible( false );
@@ -111,56 +118,59 @@ public class GraphDialog extends JDialog{
     }
 
     private class GraphWorker extends SwingWorker<Boolean, double[]>{
-
+        private static final int MAX_POINTS_NUMBER = 100;
+        
         LinkedList<BigDecimal> fifo = new LinkedList<BigDecimal>();
+        double[] arrayTopublished;
+        Response responseFromSerialPort;
 
         public GraphWorker(){
-
             fifo.add( new BigDecimal( 0.0 ) );
         }
 
         @Override
         protected Boolean doInBackground(){
-
-            int n = 0;
+            
             while (!isCancelled()){
-
-                Response response = service.sendAndGetResponse( new RPMCommand() );
-                try{
-                    Thread.sleep( 200 );
-                }catch (InterruptedException e){
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                responseFromSerialPort = service.sendAndGetResponse( commands.get( comboBox.getSelectedItem().toString() ) );
+                sleep( 200 );
+                if(responseFromSerialPort.getDecimalValue() != null){
+                    addToFifoAndPublish();
                 }
-                if(response.getDecimalValue() != null){
-                    fifo.add( response.getDecimalValue() );
-                    System.out.println( n++ );
-
-                    if(fifo.size() > 100){
-                        fifo.removeFirst();
-                    }
-
-                    double[] array = new double[ fifo.size() ];
-                    for(int i = 0; i < fifo.size(); i++){
-                        array[ i ] = fifo.get( i ).doubleValue();
-                        System.out.println( response.getDecimalValue() + ", " + fifo.get( i ) + " ," + array[ i ] );
-
-                    }
-                    publish( array );
-                    System.out.println( array );
-                }
-
             }
             return true;
-
+        }
+       
+        private void addToFifoAndPublish() {
+            fifo.add( responseFromSerialPort.getDecimalValue() );
+            if(fifo.size() > MAX_POINTS_NUMBER){
+                fifo.removeFirst();
+            }
+            arrayTopublished = convertToDoubleArray( fifo );
+            publish( arrayTopublished );
         }
 
+        private double[] convertToDoubleArray(List<BigDecimal> list) {
+            double[] array = new double[ fifo.size() ];
+            for(int i = 0; i < fifo.size(); i++){
+                array[ i ] = fifo.get( i ).doubleValue();
+            }
+            return array;
+        }
+        
         @Override
         protected void process( List<double[]> chunks ){
             double[] mostRecentDataSet = chunks.get( chunks.size() - 1 );
             chart.updateXYSeries( "randomWalk", null, mostRecentDataSet, null );
             sw.repaintChart();
         }
+    }
+    
+    
+    private void sleep( long mills ){
+        try{
+            Thread.sleep( mills );
+        }catch (InterruptedException e){}
     }
 
 }

@@ -3,7 +3,7 @@ package Commands;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class FuelPressureCommand extends Command{
+public class FuelPressureCommand extends DecValueCommand{
 
     public FuelPressureCommand(  ){
         super( "01", "0A" );

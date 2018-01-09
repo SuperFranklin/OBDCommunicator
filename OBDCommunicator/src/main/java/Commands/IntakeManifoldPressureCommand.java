@@ -6,7 +6,7 @@ import java.util.List;
 
 import Enums.OBDUnit;
 
-public class IntakeManifoldPressureCommand extends Command{
+public class IntakeManifoldPressureCommand extends DecValueCommand{
 
     public IntakeManifoldPressureCommand(){
         super( "01", "0B" );

@@ -2,7 +2,7 @@ package Gui;
 
 import java.util.stream.IntStream;
 
-import Commands.Command;
+import Commands.DecValueCommand;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 public class ParameterGraphWindow extends Application{
 
     
-    public ParameterGraphWindow(Command command) {
+    public ParameterGraphWindow(DecValueCommand command) {
         launch( );
     }
     public void start( Stage stage ) throws Exception{

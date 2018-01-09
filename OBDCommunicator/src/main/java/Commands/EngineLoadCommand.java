@@ -8,7 +8,7 @@ import java.util.List;
 import Enums.OBDUnit;
 import Utils.ByteUtils;
 
-public class EngineLoadCommand extends Command{
+public class EngineLoadCommand extends DecValueCommand{
 
     public EngineLoadCommand(){
         super( "01", "04" );

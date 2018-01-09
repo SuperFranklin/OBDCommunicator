@@ -4,7 +4,9 @@ package Gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.xml.bind.Marshaller.Listener;
 
+import Commands.MILCommand;
 import Core.Message;
 import Core.Service;
 import Utils.FactoryService;
@@ -39,6 +41,14 @@ public class MainScreen extends JFrame{
     private JLabel fldPortName;
     private JLabel fldConnectionStatus;
     private JLabel fldBoudRate;
+    
+    /// TitlePanel
+    private JPanel titlePanel;
+    
+    // MIL PANEL
+    private JPanel milPanel;
+    private JTextField fldMILLamp;
+    private JTextField fldDetectedDTCNumber;
 
     // NavigationPanel
     private JPanel navigationPanel;
@@ -80,6 +90,56 @@ public class MainScreen extends JFrame{
 
     }
 
+    private JPanel createTitlePanel() {
+        JPanel panel = new JPanel();
+        JLabel titleLabel = null;
+        Image titleImage;
+        try{
+            titleImage = ImageIO.read( new File( "TITLE.png" ) );
+            titleLabel = new JLabel(new ImageIcon( titleImage ));
+        }catch (IOException e){
+            //TODO wypisac problem z ladowanie ikony
+            e.printStackTrace();
+        }
+        
+        panel.add( titleLabel );
+        panel.setSize( 370, 110 );
+        return panel;
+    }
+    
+    private JPanel createMILPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout( new GridLayout( 3, 2 ) );
+        panel.setSize( 300, 120 );
+        /*JLabel milLampLabel = null;
+        try{
+            Image lamp = ImageIO.read( new File( "MILLAMP.png" ) );
+            milLampLabel = new JLabel( new ImageIcon( lamp ) );
+            milLampLabel.setSize( 64, 64 );
+            milLampLabel.setLocation( 0, 0 );
+            //panel.add( milLampLabel );
+            
+            
+        }catch (IOException e){
+            e.printStackTrace();
+        }*/
+        JLabel lblMILLamp = new JLabel( "Lampka MIL" );
+        JLabel lblDetectedDTCNumber = new JLabel(" Wykryte kody b³êdów");
+        JLabel lblFreezedFrames = new JLabel(" Freezed Frames");
+        fldMILLamp = new JTextField( "NO DATA" );
+        fldDetectedDTCNumber = new JTextField( "NO DATA" );
+        JTextField fldFreezedFrames = new JTextField( "NO DATA" );
+        panel.add( lblMILLamp );
+        panel.add( fldMILLamp);
+        panel.add( lblDetectedDTCNumber );
+        panel.add( fldDetectedDTCNumber );
+        panel.add( lblFreezedFrames );
+        fldFreezedFrames.setEditable( false );
+        fldMILLamp.setEditable( false );
+        fldDetectedDTCNumber.setEditable( false );
+        panel.add( fldFreezedFrames );
+        return panel;
+    }
     private JPanel createConnectionPanel(){
         JPanel panel = new JPanel( new GridLayout( 3, 2 ) );
         fldPortName = new JLabel();
@@ -142,9 +202,30 @@ public class MainScreen extends JFrame{
 
     // to Navigation Panel
     private void addActionListenersToNavigationPanel(){
+        
+        monitorBtn.addActionListener( listener ->{
+            new ActualParametersDialog( frame );
+        });
         troubleCodesBtn.addActionListener( listener->{
             new TroubleCodesDialog( this );
         } );
+        graphBtn.addActionListener( listener ->{
+            try{
+                new GraphDialog( frame );
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        });
+        troubleCodesBtn.addActionListener( listener ->{
+            new TroubleCodesDialog( frame );
+        });
+        exitBtn.addActionListener( listener -> {
+            dispose();
+        });
+        terminalBtn.addActionListener( listener -> {
+            new TerminalDialog( frame );
+        });
+        
     }
 
     // navigationPanel
@@ -170,8 +251,35 @@ public class MainScreen extends JFrame{
         connectionPanel = createConnectionPanel();
         connectionPanel.setLocation( 460, 0 );
         centralPanel.add( connectionPanel );
-
+        titlePanel = createTitlePanel();
+        titlePanel.setLocation(25,5);
+        centralPanel.add( titlePanel );
+        milPanel = createMILPanel();
+        milPanel.setLocation(20,120);
+        centralPanel.add( milPanel);
+        JPanel downloadInfoPanel= createDownloadMILInfoPanel();
+        downloadInfoPanel.setLocation( 90, 250 );
+        centralPanel.add(downloadInfoPanel);
         return centralPanel;
+    }
+    
+    private JPanel createDownloadMILInfoPanel(){
+        JPanel panel = new JPanel();
+        panel.setSize( 280, 90 );
+        JButton downloadBtn = new JButton( "Pobierz dane" );
+        downloadBtn.addActionListener( listener ->{
+            MILCommand command = new MILCommand();
+            if( command.milIsLighted()) {
+                fldMILLamp.setText( "TRUE" );
+            }else {
+                fldMILLamp.setText( "FALSE" );
+            }
+            fldDetectedDTCNumber.setText( Integer.toString( command.getNumberOfDetectedError() ));
+        });
+        downloadBtn.setSize( 280, 90 );
+        downloadBtn.setLocation( 5, 5 );
+        panel.add( downloadBtn );
+        return panel;
     }
 
     private JMenuBar createMenuBar(){

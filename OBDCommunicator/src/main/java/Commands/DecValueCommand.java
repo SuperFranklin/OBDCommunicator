@@ -8,7 +8,7 @@ import java.util.List;
 import Enums.OBDUnit;
 import Utils.ByteUtils;
 
-public abstract class Command{
+public abstract class DecValueCommand{
 
     protected int responseTimeLimit;
     protected String communicate;
@@ -17,7 +17,7 @@ public abstract class Command{
     protected OBDUnit unit;
     protected String parameterName;
 
-    public Command( String SID, String PID ){
+    public DecValueCommand( String SID, String PID ){
         this.SID = SID;
         this.PID = PID;
         communicate = SID + PID;

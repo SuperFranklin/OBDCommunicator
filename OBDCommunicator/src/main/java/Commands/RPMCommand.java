@@ -6,7 +6,7 @@ import java.util.List;
 
 import Enums.OBDUnit;
 
-public class RPMCommand extends Command{
+public class RPMCommand extends DecValueCommand{
 
     public RPMCommand(){
         super( "01", "0C" );

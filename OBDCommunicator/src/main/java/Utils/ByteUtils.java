@@ -141,4 +141,33 @@ public class ByteUtils{
         String s =("0000000" + Integer.toBinaryString(0xFF & b)).replaceAll(".*(.{8})$", "$1");
         return s;
     }
+    public static boolean[] byteArray2BitArray(byte[] bytes) {
+        boolean[] bits = new boolean[bytes.length * 8];
+        for (int i = 0; i < bytes.length * 8; i++) {
+          if ((bytes[i / 8] & (1 << (7 - (i % 8)))) > 0)
+            bits[i] = true;
+        }
+        return bits;
+      }
+    
+    public static List<Boolean> integersToBinary(List<Integer> integers) {
+        List<Boolean> result = new ArrayList<>();
+        for(Integer i : integers) {
+            int intValue = i.intValue();
+            boolean[] binary = toBinary( intValue, 4);
+            for(boolean b : binary) {
+                result.add( new Boolean( b ) );
+            }
+        }
+        return result;
+    }
+    
+    private static boolean[] toBinary(int number, int base) {
+        final boolean[] ret = new boolean[base];
+        for (int i = 0; i < base; i++) {
+            ret[base - 1 - i] = (1 << i & number) != 0;
+        }
+        return ret;
+    }
+    
 }

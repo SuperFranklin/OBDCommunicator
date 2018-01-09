@@ -6,7 +6,7 @@ import java.util.List;
 
 import Enums.OBDUnit;
 
-public class EngineCoolantTemperature extends Command{
+public class EngineCoolantTemperature extends DecValueCommand{
 
     public EngineCoolantTemperature(){
         super( "01", "05" );

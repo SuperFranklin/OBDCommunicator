@@ -20,7 +20,7 @@ import org.knowm.xchart.QuickChart;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
-import Commands.Command;
+import Commands.DecValueCommand;
 import Commands.EngineLoadCommand;
 import Commands.IntakeManifoldPressureCommand;
 import Commands.MassAirFlowRateCommand;
@@ -36,7 +36,7 @@ public class GraphDialog extends JDialog{
     private static int WIDTH = 250;
     private static int HIGHT = 250;
 
-    private Map<String, Command> commands = new HashMap<>();
+    private Map<String, DecValueCommand> commands = new HashMap<>();
     private JComboBox<String> comboBox;
     private GraphWorker graphWorker;
     private SwingWrapper<XYChart> sw;

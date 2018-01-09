@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import Commands.Command;
+import Commands.DecValueCommand;
 import Commands.EngineCoolantTemperature;
 import Commands.MassAirFlowRateCommand;
 import Commands.RPMCommand;
@@ -36,8 +36,8 @@ public class ActualParametersDialog extends JDialog{
     private JTable table;
     private JScrollPane scrollPane;
     private Service service = FactoryService.getService();
-    private Map<Command, BigDecimal> parametersMap = new HashMap<Command, BigDecimal>();
-    private Map<Command, Integer> rowsMap = new HashMap<Command, Integer>();
+    private Map<DecValueCommand, BigDecimal> parametersMap = new HashMap<DecValueCommand, BigDecimal>();
+    private Map<DecValueCommand, Integer> rowsMap = new HashMap<DecValueCommand, Integer>();
     private Thread readingThrad;
     private boolean running = true;
 
@@ -142,7 +142,7 @@ public class ActualParametersDialog extends JDialog{
     Runnable r = new Runnable(){
         public void run(){
             while (running){
-                for(Command c : parametersMap.keySet()){
+                for(DecValueCommand c : parametersMap.keySet()){
                     Response response = service.sendAndGetResponse( c );
                     try{
                         Thread.sleep( 300 );

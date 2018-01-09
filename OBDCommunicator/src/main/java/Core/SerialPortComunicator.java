@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TooManyListenersException;
 
-import Commands.Command;
+import Commands.DecValueCommand;
 import DAO.DTCUtil;
 import Exceptions.SerialPortException;
 import Gui.MainScreen;
@@ -59,7 +59,25 @@ public class SerialPortComunicator {
                 result.addError( ex.getMessage() );
             }
         }
+        
+        if(!result.hasErrors()) {
+            sleep( 500 );
+            boolean openOBDConnectionSuccesfully;
+            openOBDConnectionSuccesfully = initScanToolConnection();
+            if(!openOBDConnectionSuccesfully) result.addError( "Nie Uda³o siê nawi¹zaæ po³¹czenia z pojazdem" );
+            
+        }
         return result;
+    }
+    
+    private boolean initScanToolConnection() {
+        Response response;
+        for(int i=0;i<10;i++) {
+            response = sendAndGetResponse( "0100" );
+            if(!response.getBytes().isEmpty()) return true;
+            sleep( 100 );
+        }
+        return false;
     }
 
     private void initConnection() throws Exception{
@@ -140,7 +158,6 @@ public class SerialPortComunicator {
     public Map<String, String> getDTCMap(){
 
         Map<String, String> map = new HashMap<>();
-        List<String> result = new ArrayList();
         Response response = sendAndGetResponse( "03" );
         List<Byte> bytes = response.getBytes();
         bytes.remove( 0 );
@@ -176,7 +193,7 @@ public class SerialPortComunicator {
     }
 
     // return result with decimal value and bytes
-    public Response sendAndGetResponse( Command command, boolean writeToCommunicatorFile ){
+    public Response sendAndGetResponse( DecValueCommand command, boolean writeToCommunicatorFile ){
         Response result = new Response();
         try{
             sendCommunicate( command.getCommunicate() );

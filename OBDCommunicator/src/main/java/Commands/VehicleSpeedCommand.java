@@ -6,7 +6,7 @@ import java.util.List;
 
 import Enums.OBDUnit;
 
-public class VehicleSpeedCommand extends Command{
+public class VehicleSpeedCommand extends DecValueCommand{
 
     public VehicleSpeedCommand(){
         super( "01", "0D" );

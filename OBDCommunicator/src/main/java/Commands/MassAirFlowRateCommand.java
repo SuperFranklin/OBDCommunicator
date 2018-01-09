@@ -6,7 +6,7 @@ import java.util.List;
 
 import Enums.OBDUnit;
 
-public class MassAirFlowRateCommand extends Command{
+public class MassAirFlowRateCommand extends DecValueCommand{
 
     public MassAirFlowRateCommand(){
         super( "01", "10" );

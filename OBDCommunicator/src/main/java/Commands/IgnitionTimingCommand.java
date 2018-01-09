@@ -6,7 +6,7 @@ import java.util.List;
 
 import Enums.OBDUnit;
 
-public class IgnitionTimingCommand extends Command{
+public class IgnitionTimingCommand extends DecValueCommand{
 
     public IgnitionTimingCommand(){
         super( "01", "0E" );

@@ -5,7 +5,7 @@ package Core;
 import java.io.IOException;
 import java.util.Map;
 
-import Commands.Command;
+import Commands.DecValueCommand;
 import Gui.MainScreen;
 import Gui.TerminalDialog;
 import Utils.Error;
@@ -39,7 +39,7 @@ public class Service{
         return serialPortComunicator.closePort();
     }
 
-    public Response sendAndGetResponse( Command command ){
+    public Response sendAndGetResponse( DecValueCommand command ){
         return serialPortComunicator.sendAndGetResponse( command, true );
     }
 

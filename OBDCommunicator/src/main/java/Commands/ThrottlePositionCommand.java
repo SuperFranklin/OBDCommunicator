@@ -6,7 +6,7 @@ import java.util.List;
 
 import Enums.OBDUnit;
 
-public class ThrottlePositionCommand extends Command{
+public class ThrottlePositionCommand extends DecValueCommand{
 
     public ThrottlePositionCommand(){
         super( "01", "11" );

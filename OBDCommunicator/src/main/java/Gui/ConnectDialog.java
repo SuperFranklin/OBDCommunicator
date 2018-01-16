@@ -31,7 +31,7 @@ import Utils.Response;
 public class ConnectDialog extends JDialog{
     
     private static final Point LOCATION = new Point( 100, 100 );
-    private static final Dimension SIZE = new Dimension( 250, 250 );
+    private static final Dimension SIZE = new Dimension( 230, 150 );
     
     private MainScreen parent;
     private JComboBox<String> portsComboBox = initComboBoxParameters();
@@ -57,11 +57,11 @@ public class ConnectDialog extends JDialog{
     private void prepareGui(){
         setLayout( null );
         lblPornName.setSize( 90, 35 );
-        lblPornName.setLocation( 15, 25 );
+        lblPornName.setLocation( 15, 15 );
         portsComboBox.setSize( 95, 35 );
-        portsComboBox.setLocation( 125, 25 );
-        connectBtn.setSize( 200, 70 );
-        connectBtn.setLocation( 25, 100 );
+        portsComboBox.setLocation( 120, 15 );
+        connectBtn.setSize( 90, 45 );
+        connectBtn.setLocation( 15, 60 );
         
         add( lblPornName );
         add( portsComboBox );

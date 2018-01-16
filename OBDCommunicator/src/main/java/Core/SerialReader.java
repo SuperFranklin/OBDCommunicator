@@ -36,7 +36,6 @@ public class SerialReader implements SerialPortEventListener{
                 while ((data = inputStream.read()) > -1){
                     buffer[ len++ ] = ( byte ) data;
                 }
-
             }catch (IOException e){
                 e.printStackTrace();
             }

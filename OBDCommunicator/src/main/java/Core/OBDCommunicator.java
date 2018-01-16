@@ -2,6 +2,8 @@
 package Core;
 
 
+import DAO.DTCUtil;
+import DataBase.DBProvider;
 import Utils.FactoryService;
 
 public class OBDCommunicator{

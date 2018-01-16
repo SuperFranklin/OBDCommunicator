@@ -13,8 +13,9 @@ public class DTCUtil{
         String result = new String( "");
         try {
             CachedRowSet crs = DBProvider.executeQueryAndGetResult( "select desc from DTC where code ='P"+code+"'" );
-            crs.next();
-            result = crs.getString( "desc" );
+            if(crs.next()) {
+            result = crs.getString( "DESC" );
+            }
         }catch(SQLException e) {
             System.err.println( e );
         }

@@ -216,9 +216,6 @@ public class MainScreen extends JFrame{
                 e.printStackTrace();
             }
         });
-        troubleCodesBtn.addActionListener( listener ->{
-            new TroubleCodesDialog( frame );
-        });
         exitBtn.addActionListener( listener -> {
             dispose();
         });
@@ -296,12 +293,24 @@ public class MainScreen extends JFrame{
         serviceMenu.add( createTerminalMenuItem() );
         serviceMenu.add( createActualParametersMenuItem() );
         serviceMenu.add( createGraphsMenuItem() );
+        //serviceMenu.add( createResetECUMenuItem() );
+        //serviceMenu.add( createRemoveDCTSMenuItem() );
         menuBar.add( connectionMenu );
         menuBar.add( serviceMenu );
         menuBar.add( settingsMenu );
         menuBar.add( helpMenu );
 
         return menuBar;
+    }
+
+    private JMenuItem createRemoveDCTSMenuItem(){
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private JMenuItem createResetECUMenuItem(){
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private JMenuItem createCloseConnectionMenuItem(){

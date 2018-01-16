@@ -15,7 +15,6 @@ public class ParameterUtil{
         String result = new String( "");
         try {
             CachedRowSet crs = DBProvider.executeQueryAndGetResult( "select value from PARAMETER where NAME='filepath'" );
-            //CachedRowSet crs = DBProvider.executeQueryAndGetResult( "select VALUE from"+TABLE_NAME+" where name ='"+p.toString()+"'" );
             crs.next();
             result = crs.getString( "VALUE" );
         }catch(SQLException e) {

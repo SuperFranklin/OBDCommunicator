@@ -17,16 +17,11 @@ import java.util.TooManyListenersException;
 import Commands.DecValueCommand;
 import DAO.DTCUtil;
 import Exceptions.SerialPortException;
-import Gui.MainScreen;
-import Gui.TerminalDialog;
 import Utils.ByteUtils;
 import Utils.Error;
-import Utils.FactoryService;
 import Utils.Response;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
@@ -64,7 +59,7 @@ public class SerialPortComunicator {
             sleep( 500 );
             boolean openOBDConnectionSuccesfully;
             openOBDConnectionSuccesfully = initScanToolConnection();
-            if(!openOBDConnectionSuccesfully) result.addError( "Nie Uda³o siê nawi¹zaæ po³¹czenia z pojazdem" );
+            if(!openOBDConnectionSuccesfully) result.addError( "Nie uda³o siê nawi¹zaæ po³¹czenia z pojazdem" );
             
         }
         return result;
@@ -164,7 +159,6 @@ public class SerialPortComunicator {
         bytes.remove( 0 );
         bytes = ByteUtils.removeRedundantCharacters( bytes );
         int modulo;
-        System.out.println( ByteUtils.getStringFromBytes( bytes ) );
         for(int i = 0; i < bytes.size(); i++){
             modulo = i % 14;
             if(modulo == 0 || modulo == 1) bytes.set( i, ( byte ) 0 );
@@ -175,8 +169,8 @@ public class SerialPortComunicator {
             Byte b = it.next();
             if(b.byteValue() == ( byte ) 0) it.remove();
         }
-        System.out.println( ByteUtils.getStringFromBytes( bytes ) );
         byte[] code = new byte[ 4 ];
+        
         for(int x = 0; x <= bytes.size() / 4; x++){
             for(int i = 0; i < 4; i++){
                 code[ i ] = bytes.get( i ).byteValue();
@@ -187,8 +181,11 @@ public class SerialPortComunicator {
             bytes.remove( 0 );
 
             String codeTxt = new String( code );
-            map.put( codeTxt, DTCUtil.getTroubleCodeDesc( codeTxt ) );
+            if(code.length==4 && !codeTxt.equals( "0000" )) {
+                map.put( codeTxt, DTCUtil.getTroubleCodeDesc( codeTxt ) );
+            }
         }
+        
         return map;
     }
 

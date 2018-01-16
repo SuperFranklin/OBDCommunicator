@@ -35,9 +35,6 @@ public class TroubleCodesDialog extends JDialog{
         dtcMap = service.getDTCMap();
         initParameters();
         initDtc();
-        
-        
-
     }
 
     private void initParameters() {

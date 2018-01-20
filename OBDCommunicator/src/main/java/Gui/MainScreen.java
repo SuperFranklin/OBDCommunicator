@@ -8,7 +8,7 @@ import javax.xml.bind.Marshaller.Listener;
 
 import Commands.MILCommand;
 import Core.Message;
-import Core.Service;
+import Core.ServiceImpl;
 import Utils.FactoryService;
 import Utils.Response;
 
@@ -28,7 +28,7 @@ public class MainScreen extends JFrame{
 
     JFrame frame;
 
-    private Service service = FactoryService.getService();
+    private ServiceImpl service = FactoryService.getService();
     private TerminalDialog terminalDialog;
     private ActualParametersDialog actualParametersDialog;
     private Container container;
@@ -294,7 +294,7 @@ public class MainScreen extends JFrame{
         serviceMenu.add( createActualParametersMenuItem() );
         serviceMenu.add( createGraphsMenuItem() );
         //serviceMenu.add( createResetECUMenuItem() );
-        //serviceMenu.add( createRemoveDCTSMenuItem() );
+        serviceMenu.add( createRemoveDCTSMenuItem() );
         menuBar.add( connectionMenu );
         menuBar.add( serviceMenu );
         menuBar.add( settingsMenu );
@@ -304,8 +304,18 @@ public class MainScreen extends JFrame{
     }
 
     private JMenuItem createRemoveDCTSMenuItem(){
-        // TODO Auto-generated method stub
-        return null;
+        JMenuItem menuItem = new JMenuItem( "Usuñ kody b³êdów" );
+        menuItem.addActionListener( listener ->{
+            Response response = service.clearDCTs();
+            if(!response.hasErrors()) {
+                JOptionPane.showMessageDialog( null, "Kody b³êdów zosta³y skasowane z pamiêci sterownika", "OBDExplorer",
+                        JOptionPane.INFORMATION_MESSAGE );
+            }else {
+                JOptionPane.showMessageDialog( null, response.getErrorAsString(), "OBDExplorer",
+                        JOptionPane.INFORMATION_MESSAGE );
+            }
+        });
+        return menuItem;
     }
 
     private JMenuItem createResetECUMenuItem(){
@@ -393,7 +403,7 @@ public class MainScreen extends JFrame{
 
     }
 
-    public Service getService(){
+    public ServiceImpl getService(){
         return service;
     }
 
@@ -408,7 +418,7 @@ public class MainScreen extends JFrame{
         if(status != null) fldConnectionStatus.setText( status );
     }
 
-    public void setService( Service service ){
+    public void setService( ServiceImpl service ){
         this.service = service;
     }
 

@@ -19,7 +19,6 @@ public class SerialReader implements SerialPortEventListener{
     private static final int DATA_AVAIABLE = 1;
     private InputStream inputStream;
     private byte[] buffer;
-    private List<byte[]> buffers = new ArrayList<byte[]>();
 
     public SerialReader( InputStream in ){
         this.inputStream = in;
@@ -42,16 +41,9 @@ public class SerialReader implements SerialPortEventListener{
         }
     }
 
-    public List<byte[]> getBuffers(){
-        return buffers;
-    }
-
     public byte[] getBuffer(){
         return buffer;
     }
 
-    public void clearBuffers(){
-        buffers.clear();
-    }
 
 }

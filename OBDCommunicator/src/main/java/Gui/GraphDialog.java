@@ -27,7 +27,7 @@ import Commands.MassAirFlowRateCommand;
 import Commands.RPMCommand;
 import Commands.VehicleSpeedCommand;
 import Core.Message;
-import Core.Service;
+import Core.ServiceImpl;
 import Utils.FactoryService;
 import Utils.Response;
 
@@ -40,7 +40,7 @@ public class GraphDialog extends JDialog{
     private JComboBox<String> comboBox;
     private GraphWorker graphWorker;
     private SwingWrapper<XYChart> sw;
-    private Service service = FactoryService.getService();
+    private ServiceImpl service = FactoryService.getService();
     private XYChart chart;
     private GridBagConstraints constraints;
 

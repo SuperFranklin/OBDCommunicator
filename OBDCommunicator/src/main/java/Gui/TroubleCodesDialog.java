@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import Commands.RPMCommand;
-import Core.Service;
+import Core.ServiceImpl;
 import Utils.FactoryService;
 import Utils.Response;
 
@@ -27,7 +27,7 @@ public class TroubleCodesDialog extends JDialog{
     private JFrame parent;
     private JTable table;
     private JPanel buttonPanel;
-    private Service service = FactoryService.getService();
+    private ServiceImpl service = FactoryService.getService();
     private Map<String, String> dtcMap;
     private DefaultTableModel tableModel;
     public TroubleCodesDialog( JFrame parent ) {

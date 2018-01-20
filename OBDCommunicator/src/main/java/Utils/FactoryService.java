@@ -3,21 +3,21 @@ package Utils;
 
 
 import Core.SerialPortComunicator;
-import Core.Service;
+import Core.ServiceImpl;
 import DataBase.DBProvider;
 import Gui.MainScreen;
 
 public class FactoryService{
 
-    private static Service service;
+    private static ServiceImpl service;
     private static MainScreen displayer;
     private static SerialPortComunicator serialPortComunicator;
     private static DBProvider dbProvider;
 
-    public static Service getService(){
+    public static ServiceImpl getService(){
 
         if(service == null){
-            service = new Service();
+            service = new ServiceImpl();
         }
         service.setSerialPortComunicator( getSerialPortComunicator() );
         return service;

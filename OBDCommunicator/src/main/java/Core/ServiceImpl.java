@@ -13,13 +13,13 @@ import Utils.FactoryService;
 import Utils.Response;
 import gnu.io.SerialPort;
 
-public class Service{
+public class ServiceImpl{
 
     SerialPortComunicator serialPortComunicator = FactoryService.getSerialPortComunicator();
     MainScreen displayer;
     TerminalDialog terminalDialog;
 
-    public Service(){}
+    public ServiceImpl(){}
 
     public Response sendBytes( String message ){
         return serialPortComunicator.sendCommunicate( message + "\r" );
@@ -29,6 +29,15 @@ public class Service{
         Response response = new Response();
         try{
             response = serialPortComunicator.conncet( portNumber );
+        }catch (Exception e){
+            response.addError( new Error( e.toString() ) );
+        }
+        return response;
+    }
+    public Response clearDCTs() {
+        Response response = new Response();
+        try{
+            response = serialPortComunicator.sendAndGetResponse( "04" );
         }catch (Exception e){
             response.addError( new Error( e.toString() ) );
         }

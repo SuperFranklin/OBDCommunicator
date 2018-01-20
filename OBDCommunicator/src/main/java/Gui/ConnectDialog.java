@@ -25,7 +25,7 @@ import javax.swing.SpringLayout;
 import org.w3c.dom.css.Counter;
 
 import Core.Message;
-import Core.Service;
+import Core.ServiceImpl;
 import Utils.Response;
 
 public class ConnectDialog extends JDialog{
@@ -37,7 +37,7 @@ public class ConnectDialog extends JDialog{
     private JComboBox<String> portsComboBox = initComboBoxParameters();
     private List<CommPortIdentifier> availablePorts;
     private JLabel lblPornName = new JLabel( Message.PORT_NAME );
-    private Service service;
+    private ServiceImpl service;
     private JButton connectBtn = createConnectBtn();
 
     public ConnectDialog( JFrame frame ){

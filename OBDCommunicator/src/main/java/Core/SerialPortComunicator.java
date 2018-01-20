@@ -27,7 +27,7 @@ import gnu.io.UnsupportedCommOperationException;
 
 public class SerialPortComunicator {
 
-    private Service service;
+    private ServiceImpl service;
     private OutputStream outStream;
     private InputStream inStream;
     private SerialPort serialPort;
@@ -37,7 +37,7 @@ public class SerialPortComunicator {
     private CommPort commPort = null;
     private final static int TIMEOUT = 2000;
 
-    public SerialPortComunicator( Service service ){
+    public SerialPortComunicator( ServiceImpl service ){
         this.service = service;
     }
 
@@ -140,7 +140,6 @@ public class SerialPortComunicator {
             sendCommunicate( command + "\r" );
             sleep( 500 );
             byte[] buffer = serialReader.getBuffer();
-            serialReader.clearBuffers();
             List<Byte> data = getBufferAsList( buffer );
             result.setBytes( data );
         }catch (Exception e){

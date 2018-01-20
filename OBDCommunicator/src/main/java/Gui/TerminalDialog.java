@@ -19,14 +19,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import Core.Parameters;
-import Core.Service;
+import Core.ServiceImpl;
 import Utils.Response;
 import Utils.ByteUtils;
 
 public class TerminalDialog extends JDialog{
 
     public MainScreen parent;
-    private Service service;
+    private ServiceImpl service;
     private JTextField fldMessage= new JTextField( 10 );
     private JLabel lblResponse= new JLabel( "Odpowiedzi" );
     private JTextArea responseTxtArea= new JTextArea( 12, 20 );

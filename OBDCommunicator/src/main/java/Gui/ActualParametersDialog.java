@@ -22,7 +22,7 @@ import Commands.RPMCommand;
 import Commands.ThrottlePositionCommand;
 import Commands.VehicleSpeedCommand;
 import Core.Message;
-import Core.Service;
+import Core.ServiceImpl;
 import Enums.OBDUnit;
 import Utils.FactoryService;
 import Utils.Response;
@@ -35,7 +35,7 @@ public class ActualParametersDialog extends JDialog{
     private MainScreen parent;
     private JTable table;
     private JScrollPane scrollPane;
-    private Service service = FactoryService.getService();
+    private ServiceImpl service = FactoryService.getService();
     private Map<DecValueCommand, BigDecimal> parametersMap = new HashMap<DecValueCommand, BigDecimal>();
     private Map<DecValueCommand, Integer> rowsMap = new HashMap<DecValueCommand, Integer>();
     private Thread readingThrad;

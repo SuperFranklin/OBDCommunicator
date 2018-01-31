@@ -41,7 +41,7 @@ public class SerialPortComunicator {
         this.service = service;
     }
 
-    public Response conncet( String portName ) throws Exception{
+    public Response conncet( String portName, Integer protocolNr, Integer baudRate ) throws Exception{
         Response result = new Response();
 
         portIdentifier = CommPortIdentifier.getPortIdentifier( portName );
@@ -57,6 +57,7 @@ public class SerialPortComunicator {
         
         if(!result.hasErrors()) {
             sleep( 500 );
+            sendAndGetResponse( "AT SP" + protocolNr );
             boolean openOBDConnectionSuccesfully;
             openOBDConnectionSuccesfully = initScanToolConnection();
             if(!openOBDConnectionSuccesfully) result.addError( "Nie uda³o siê nawi¹zaæ po³¹czenia z pojazdem" );
@@ -181,7 +182,7 @@ public class SerialPortComunicator {
 
             String codeTxt = new String( code );
             if(code.length==4 && !codeTxt.equals( "0000" )) {
-                map.put( codeTxt, DTCUtil.getTroubleCodeDesc( codeTxt ) );
+                map.put( codeTxt, DTCUtil.getTroubleCodeDesc( codeTxt ).getDescription() );
             }
         }
         
@@ -193,7 +194,7 @@ public class SerialPortComunicator {
         Response result = new Response();
         try{
             sendCommunicate( command.getCommunicate() );
-            sleep( 200 );
+            sleep( 80 );
             byte[] buffer = serialReader.getBuffer();
             List<Byte> data = getBufferAsList( buffer );
             result.setBytes( data );

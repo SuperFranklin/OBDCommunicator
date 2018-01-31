@@ -144,11 +144,7 @@ public class ActualParametersDialog extends JDialog{
             while (running){
                 for(DecValueCommand c : parametersMap.keySet()){
                     Response response = service.sendAndGetResponse( c );
-                    try{
-                        Thread.sleep( 300 );
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
+                   
                     if(!response.hasErrors()){
                         parametersMap.put( c, response.getDecimalValue() );
                     }

@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.BrokenBarrierException;
 
 public class MainScreen extends JFrame{
 
@@ -31,6 +32,8 @@ public class MainScreen extends JFrame{
     private ServiceImpl service = FactoryService.getService();
     private TerminalDialog terminalDialog;
     private ActualParametersDialog actualParametersDialog;
+    private TroubleCodesDialog troubleCodesDialog;
+    private GraphDialog graphDialog;
     private Container container;
     private JPanel centralPanel;
     private Image logo;
@@ -49,7 +52,13 @@ public class MainScreen extends JFrame{
     private JPanel milPanel;
     private JTextField fldMILLamp;
     private JTextField fldDetectedDTCNumber;
-
+    
+    //VERSION Panel
+    private JPanel versionPanel;
+    private JTextField fldElm327Version;
+    private JLabel lblElm327Version;
+    private JButton btnGetVersion;
+    
     // NavigationPanel
     private JPanel navigationPanel;
     private Image monitorIcon , graphIcon , settingsIcon , troubleCodesIcon , exitIcon , terminalIcon;
@@ -105,6 +114,28 @@ public class MainScreen extends JFrame{
         panel.add( titleLabel );
         panel.setSize( 370, 110 );
         return panel;
+    }
+    
+    private void initELMVersionPanel() {
+        versionPanel = new JPanel();
+        versionPanel.setSize( 150, 150 );
+        versionPanel.setLocation( 250, 250 );
+        fldElm327Version = new JTextField();
+        fldElm327Version.setEditable( false );
+        fldElm327Version.setSize( 100, 60);
+        lblElm327Version = new JLabel("Wersja: ");
+        lblElm327Version.setSize( 50, 60 );
+        btnGetVersion = new JButton( "Pobierz informacjê o wersji" );
+        btnGetVersion.setSize( 80, 60 );
+        
+        lblElm327Version.setLocation( 0, 0 );
+        fldElm327Version.setLocation( 100, 0 );
+        btnGetVersion.setLocation( 0, 60 );
+        versionPanel.add( fldElm327Version );
+        versionPanel.add(  lblElm327Version);
+        versionPanel.add( btnGetVersion );
+        
+        add(versionPanel, BorderLayout.SOUTH);
     }
     
     private JPanel createMILPanel() {
@@ -204,14 +235,14 @@ public class MainScreen extends JFrame{
     private void addActionListenersToNavigationPanel(){
         
         monitorBtn.addActionListener( listener ->{
-            new ActualParametersDialog( frame );
+          actualParametersDialog =  new ActualParametersDialog( frame );
         });
         troubleCodesBtn.addActionListener( listener->{
-            new TroubleCodesDialog( this );
+           troubleCodesDialog = new TroubleCodesDialog( this );
         } );
         graphBtn.addActionListener( listener ->{
             try{
-                new GraphDialog( frame );
+             graphDialog = new GraphDialog( frame );
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -220,7 +251,7 @@ public class MainScreen extends JFrame{
             dispose();
         });
         terminalBtn.addActionListener( listener -> {
-            new TerminalDialog( frame );
+          terminalDialog =  new TerminalDialog( frame );
         });
         
     }
@@ -255,6 +286,7 @@ public class MainScreen extends JFrame{
         milPanel.setLocation(20,120);
         centralPanel.add( milPanel);
         JPanel downloadInfoPanel= createDownloadMILInfoPanel();
+       
         downloadInfoPanel.setLocation( 90, 250 );
         centralPanel.add(downloadInfoPanel);
         return centralPanel;
@@ -298,9 +330,41 @@ public class MainScreen extends JFrame{
         menuBar.add( connectionMenu );
         menuBar.add( serviceMenu );
         menuBar.add( settingsMenu );
+        //settingsMenu.add( createSettingsItem() );
+        helpMenu.add( createAboutProgramm() );
         menuBar.add( helpMenu );
 
         return menuBar;
+    }
+
+    private JMenuItem createSettingsItem(){
+        // TODO Auto-generated method stub
+        return null;
+    }
+    private JMenuItem createAboutProgramm() {
+        
+        JMenuItem menuItem = new JMenuItem( "O programie" );
+        menuItem.addActionListener( listener ->{
+            JDialog dialog = createAboutProgramDialog();
+            dialog.setVisible( true );
+            
+        });
+        
+        return menuItem;
+    }
+    
+
+    private JDialog createAboutProgramDialog(){
+        JDialog dialog = new JDialog();
+        JPanel panel = new JPanel();
+        panel.setSize( 190, 100 );
+        dialog.setSize( 190, 100 );
+        dialog.setLocationRelativeTo( null );
+        dialog.setResizable( false );
+        
+        panel.add( new JLabel( "<html>Projekt dyplomowy:  <br/> Aplikacja diagnostyczna OBD <br/> Autor: Franciszek S³upski</html>") );
+        dialog.add( panel );
+        return dialog;
     }
 
     private JMenuItem createRemoveDCTSMenuItem(){

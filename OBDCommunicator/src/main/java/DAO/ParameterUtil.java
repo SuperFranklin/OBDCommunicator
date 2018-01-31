@@ -14,7 +14,7 @@ public class ParameterUtil{
         
         String result = new String( "");
         try {
-            CachedRowSet crs = DBProvider.executeQueryAndGetResult( "select value from PARAMETER where NAME='filepath'" );
+            CachedRowSet crs = DBProvider.executeQueryAndGetResult( "select value from PARAMETER where NAME='"+p+"'");
             crs.next();
             result = crs.getString( "VALUE" );
         }catch(SQLException e) {
@@ -22,5 +22,9 @@ public class ParameterUtil{
         }
         
         return result;
+    }
+public static void setParameterValue( Parameter p, String value ) {
+            DBProvider.executeUpdateQuery( "update PARAMETER SET value='"+value +"' where NAME='"+p+"'");
+            //result = crs.getString( "VALUE" );
     }
 }

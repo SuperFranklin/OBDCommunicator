@@ -25,10 +25,10 @@ public class ServiceImpl{
         return serialPortComunicator.sendCommunicate( message + "\r" );
     }
 
-    public Response connect( String portNumber ){
+    public Response connect( String portNumber, Integer protocolNr, Integer baudRate ){
         Response response = new Response();
         try{
-            response = serialPortComunicator.conncet( portNumber );
+            response = serialPortComunicator.conncet( portNumber, protocolNr, baudRate );
         }catch (Exception e){
             response.addError( new Error( e.toString() ) );
         }

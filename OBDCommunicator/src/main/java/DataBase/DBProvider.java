@@ -83,6 +83,17 @@ public class DBProvider{
 
     }
     
+    public static void executeUpdateQuery(String sqlQquery) {
+        try{
+            stat = createStatement();
+            stat.executeUpdate( sqlQquery );
+        }catch (SQLException e){
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        closeConnection();
+    }
+    
     
 }
 

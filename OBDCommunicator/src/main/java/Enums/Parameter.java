@@ -3,6 +3,8 @@ package Enums;
 public enum Parameter {
 
     bound,
-    filePath
-    
+    filePath,
+    printSpace,
+    headers;
+   
 }
